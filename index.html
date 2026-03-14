@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle Geral — Pref. Gov. Edison Lobão</title>
+
+  <!-- React 18 -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel standalone (transpila o .jsx no navegador) -->
+  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+
+  <!-- SheetJS (exportar/importar Excel) -->
+  <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Recharts (gráficos) -->
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    #splash {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: linear-gradient(160deg, #020c02 0%, #04120a 50%, #030818 100%);
+      color: #EFD103; font-family: sans-serif; gap: 16px; z-index: 9999;
+      transition: opacity .4s;
+    }
+    #splash p { font-size: 14px; color: #8aaa70; }
+    .spin {
+      width: 40px; height: 40px;
+      border: 3px solid #1a3014;
+      border-top-color: #EFD103;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Tela de carregamento -->
+  <div id="splash">
+    <div class="spin"></div>
+    <strong style="font-size:15px">CONTROLADORIA GERAL</strong>
+    <p>Pref. Gov. Edison Lobão — carregando...</p>
+  </div>
+
+  <!-- Container do React -->
+  <div id="root"></div>
+
+  <script>
+    // ── Expor React e Recharts globalmente para o .jsx ──────────────────────
+    window.React    = React;
+    window.useState = React.useState;
+    window.useEffect= React.useEffect;
+    window.useCallback = React.useCallback;
+    window.useMemo  = React.useMemo;
+    window.useRef   = React.useRef;
+
+    // Expor componentes do Recharts
+    if (window.Recharts) {
+      [
+        'BarChart','Bar','XAxis','YAxis','CartesianGrid','Tooltip',
+        'LineChart','Line','ResponsiveContainer','Legend','PieChart','Pie','Cell'
+      ].forEach(function(k){ if(window.Recharts[k]) window[k] = window.Recharts[k]; });
+    }
+
+    // Expor XLSX
+    window.XLSX = window.XLSX || (typeof XLSX !== 'undefined' ? XLSX : null);
+
+    // ── Montar o React depois que o .jsx for carregado ───────────────────────
+    function mountApp() {
+      var splash = document.getElementById('splash');
+      if (!window.App) {
+        splash.innerHTML = '<p style="color:#f87171;font-size:16px;text-align:center;padding:20px">Erro: componente App não encontrado.<br>Verifique se o arquivo ControleGeral.jsx foi enviado corretamente.</p>';
+        return;
+      }
+      try {
+        var root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(window.App));
+        // esconder splash suavemente
+        splash.style.opacity = '0';
+        setTimeout(function(){ splash.style.display = 'none'; }, 400);
+      } catch(e) {
+        splash.innerHTML = '<p style="color:#f87171;font-size:14px;padding:20px;text-align:center">Erro ao iniciar:<br>' + e.message + '</p>';
+        console.error(e);
+      }
+    }
+  </script>
+
+  <!-- ── Carregar e transpilar o sistema ──────────────────────────────────── -->
+  <script
+    type="text/babel"
+    src="./ControleGeral.jsx"
+    data-presets="react"
+    onload="mountApp()"
+    onerror="document.getElementById('splash').innerHTML='<p style=color:#f87171;padding:20px>Erro ao carregar ControleGeral.jsx — verifique se o arquivo existe no repositório.</p>'"
+  ></script>
+
+</body>
+</html>
