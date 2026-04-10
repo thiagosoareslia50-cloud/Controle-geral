@@ -3338,10 +3338,12 @@ function NovoProcessoPage({
     toast(`📋 Duplicado: ${ultimoProcesso["NÚMERO DO DOCUMENTO"]}`);
   };
   // [Bug 4 FIX] Atualiza refs dos atalhos a cada render — sem stale closures
-  handleSalvarRef.current = handleSalvar;
-  handleGerarPDFRef.current = handleGerarPDF;
-  handleLimparRef.current = handleLimpar;
-  handleDuplicarUltimoRef.current = handleDuplicarUltimo;
+  useLayoutEffect(() => {
+    handleSalvarRef.current = handleSalvar;
+    handleGerarPDFRef.current = handleGerarPDF;
+    handleLimparRef.current = handleLimpar;
+    handleDuplicarUltimoRef.current = handleDuplicarUltimo;
+  });
   const ti = TINFO[form.tipo];
   const chkItems = CHK[form.tipo] || [];
   const sits = getChks(form.tipo);
