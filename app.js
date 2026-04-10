@@ -6029,13 +6029,11 @@ function App() {
     // Buscar dados completos do processo na tabela de processos (pode ter mais dados)
     const procCompleto = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || ""));
     const r2 = procCompleto || row;
-    // Também buscar dados do fornecedor no histórico para auto-completar
-    const mpBusca = buildMapData(processos);
-    const forn2 = r2["FORNECEDOR"] || r2["Fornecedor"] || row["Fornecedor"] || "";
-    const org2 = r2["ORGÃO"] || r2["Órgão"] || row["Órgão"] || "";
     // [FIX] Usa APENAS os dados do processo salvo, sem fallbacks históricos.
     // Fallbacks por fornecedor/órgão podiam sobrescrever campos que o usuário
     // editou e salvou, fazendo o PDF mostrar dados antigos (ex: CONTRATO velho).
+    const forn2 = r2["FORNECEDOR"] || r2["Fornecedor"] || "";
+    const org2 = r2["ORGÃO"] || r2["Órgão"] || "";
     const d = {
       processo:    r2["NÚMERO DO DOCUMENTO"] || row["Processo"] || "",
       orgao:       org2,
