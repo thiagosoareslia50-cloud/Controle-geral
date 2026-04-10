@@ -171,18 +171,18 @@ const ST = {
         const result = await _sbFetch("POST", k, serialized);
         cloud = result === true;
         if (cloud) _sbLive = true;
-      } catch {}
+      } catch (e) { console.error(e); }
     }
     try {
       localStorage.setItem("cgel_" + k, serialized);
-    } catch {}
+    } catch (e) { console.error(e); }
     return { ok: true, cloud };
   },
 
   async del(k) {
     delete MEM[k];
-    if (_sbReady) { try { await _sbFetch("DELETE", k); } catch {} }
-    try { localStorage.removeItem("cgel_" + k); } catch {}
+    if (_sbReady) { try { await _sbFetch("DELETE", k); } catch (e) { console.error(e); } }
+    try { localStorage.removeItem("cgel_" + k); } catch (e) { console.error(e); }
     return true;
   },
 
