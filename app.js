@@ -1111,7 +1111,9 @@ async function gerarPDF(d, tipo, deferir, checklist, sits) {
         bY = 8;
       try {
         doc.addImage(window.BRASAO_B64, "PNG", bX, bY, bW, bH);
-      } catch (e) {}
+      } catch (e) {
+        console.error("Error adding image to doc:", e);
+      }
       let y = bY + bH + 4.5;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
