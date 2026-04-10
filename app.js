@@ -5803,6 +5803,19 @@ function ConfigPage({
 function App() {
   const [user, setUser] = useState(null);
   const [processos, setProcessos] = useState([]);
+
+  // Performance Pattern: O(1) lookups for processos
+  const processosMap = useMemo(() => {
+    const map = new Map();
+    processos.forEach(p => {
+      const num = String(p["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (num && !map.has(num)) {
+        map.set(num, p);
+      }
+    });
+    return map;
+  }, [processos]);
+
   const [historico, setHistorico] = useState([]);
   const [orgaosConfig, setOrgaosConfig] = useState({});
   const [appConfig, setAppConfig] = useState({
@@ -6027,7 +6040,8 @@ function App() {
     const decRaw = row["_decisao"] || row["Decisão"] || "deferir";
     const isDeferido = decRaw !== "indeferir" && !String(decRaw).toUpperCase().includes("INDE");
     // Buscar dados completos do processo na tabela de processos (pode ter mais dados)
-    const procCompleto = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || ""));
+    const searchNum = String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || "").trim();
+    const procCompleto = processosMap.get(searchNum);
     const r2 = procCompleto || row;
     // Também buscar dados do fornecedor no histórico para auto-completar
     const mpBusca = buildMapData(processos);
@@ -6072,7 +6086,7 @@ function App() {
       URL.revokeObjectURL(url);
     }, 2000);
     toast("✅ PDF gerado!");
-  }, [appConfig, processos]);
+  }, [appConfig, processos, processosMap]);
   const handleSync = useCallback(async () => {
     if (!_sbReady) {
       toast("⚠️ Supabase não configurado — dados salvos apenas neste navegador.", "warn");
@@ -6309,7 +6323,8 @@ function App() {
     onGerarPDF: handleGerarPDFBusca,
     onEditar: h => {
       // buscar o processo completo pelo número
-      const proc = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(h["Processo"]));
+      const searchNum = String(h["Processo"] || "").trim();
+      const proc = processosMap.get(searchNum);
       if (proc) {
         handleEditar(proc);
       } else {
