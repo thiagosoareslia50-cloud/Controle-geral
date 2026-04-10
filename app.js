@@ -6365,4 +6365,11 @@ function App() {
     toasts: toasts
   }));
 }
-window.App = App;
+
+if (typeof window !== 'undefined') {
+  window.App = App;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { formatValor };
+}
