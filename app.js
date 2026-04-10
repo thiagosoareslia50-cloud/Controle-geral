@@ -39,8 +39,7 @@ async function loadSqlJs() {
         });
         _sqlJs = SQL;
         res(SQL);
-      } catch {
-        res(null);
+      } catch (e) { console.error(e); res(null);
       }
     };
     s.onerror = () => res(null);
@@ -92,7 +91,7 @@ async function _sbTestConnection() {
     );
     _sbLive = res.ok;
     return _sbLive;
-  } catch {
+  } catch (e) { console.error(e);
     _sbLive = false;
     return false;
   }
@@ -139,7 +138,7 @@ async function _sbFetch(method, chave, valor) {
       _sbLive = true;
       return await res.json();
     }
-  } catch { return null; }
+  } catch (e) { console.error(e); return null; }
 }
 
 const MEM = {};
@@ -149,15 +148,15 @@ const ST = {
       try {
         const raw = await _sbFetch("GET", k);
         if (raw !== null) {
-          try { localStorage.setItem("cgel_" + k, raw); } catch {}
+          try { localStorage.setItem("cgel_" + k, raw); } catch (e) { console.error(e); }
           return JSON.parse(raw);
         }
-      } catch {}
+      } catch (e) { console.error(e); }
     }
     try {
       const raw = localStorage.getItem("cgel_" + k);
       if (raw !== null) return JSON.parse(raw);
-    } catch {}
+    } catch (e) { console.error(e); }
     return MEM[k] ?? null;
   },
 
@@ -171,18 +170,18 @@ const ST = {
         const result = await _sbFetch("POST", k, serialized);
         cloud = result === true;
         if (cloud) _sbLive = true;
-      } catch {}
+      } catch (e) { console.error(e); }
     }
     try {
       localStorage.setItem("cgel_" + k, serialized);
-    } catch {}
+    } catch (e) { console.error(e); }
     return { ok: true, cloud };
   },
 
   async del(k) {
     delete MEM[k];
-    if (_sbReady) { try { await _sbFetch("DELETE", k); } catch {} }
-    try { localStorage.removeItem("cgel_" + k); } catch {}
+    if (_sbReady) { try { await _sbFetch("DELETE", k); } catch (e) { console.error(e); } }
+    try { localStorage.removeItem("cgel_" + k); } catch (e) { console.error(e); }
     return true;
   },
 
@@ -194,17 +193,17 @@ const ST = {
         if (rows !== null) {
           // Atualiza cache local com todos os registros recebidos
           rows.forEach(r => {
-            try { localStorage.setItem("cgel_" + r.chave, r.valor); } catch {}
+            try { localStorage.setItem("cgel_" + r.chave, r.valor); } catch (e) { console.error(e); }
           });
           return rows
             .filter(r => r.valor)
             .map(r => {
               try { return { key: r.chave, value: JSON.parse(r.valor) }; }
-              catch { return null; }
+              catch (e) { console.error(e); return null; }
             })
             .filter(Boolean);
         }
-      } catch {}
+      } catch (e) { console.error(e); }
     }
     // Fallback offline: lê localStorage deste navegador
     try {
@@ -214,12 +213,12 @@ const ST = {
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
-            try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
+            try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch (e) { console.error(e); }
           }
         }
       }
       if (results.length) return results;
-    } catch {}
+    } catch (e) { console.error(e); }
     return Object.entries(MEM)
       .filter(([k]) => k.startsWith(prefix))
       .map(([k, v]) => ({ key: k, value: v }));
@@ -963,7 +962,7 @@ async function readSqliteDB(file) {
           processos.push(o);
         }
       }
-    } catch {}
+    } catch (e) { console.error(e); }
     try {
       const r = db.exec("SELECT * FROM historico");
       if (r[0]) {
@@ -979,7 +978,7 @@ async function readSqliteDB(file) {
           historico.push(o);
         }
       }
-    } catch {}
+    } catch (e) { console.error(e); }
     try {
       const r = db.exec("SELECT * FROM orgaos_config");
       if (r[0]) {
@@ -998,7 +997,7 @@ async function readSqliteDB(file) {
           };
         }
       }
-    } catch {}
+    } catch (e) { console.error(e); }
     db.close();
     return {
       processos,
@@ -1029,8 +1028,7 @@ function cleanBrasaoAsync(src) {
         for (let i = 0; i < px.length; i += 4) if (px[i] > 220 && px[i + 1] > 220 && px[i + 2] > 220) px[i + 3] = 0;
         ctx.putImageData(id, 0, 0);
         resolve(canvas.toDataURL("image/png"));
-      } catch {
-        resolve(src);
+      } catch (e) { console.error(e); resolve(src);
       }
     };
     img.onerror = () => resolve(src);
@@ -3300,7 +3298,7 @@ function NovoProcessoPage({
     iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
     iframe.src = url;
     const cleanup = () => {
-      try { document.body.removeChild(iframe); } catch {}
+      try { document.body.removeChild(iframe); } catch (e) { console.error(e); }
       URL.revokeObjectURL(url);
     };
     document.body.appendChild(iframe);
