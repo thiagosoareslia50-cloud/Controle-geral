@@ -3300,7 +3300,7 @@ function NovoProcessoPage({
     iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
     iframe.src = url;
     const cleanup = () => {
-      try { document.body.removeChild(iframe); } catch {}
+      try { document.body.removeChild(iframe); } catch (e) { console.error("Error cleaning up iframe:", e); }
       URL.revokeObjectURL(url);
     };
     document.body.appendChild(iframe);
