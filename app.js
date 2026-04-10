@@ -18,7 +18,7 @@
          → elimina race-condition de escritas concorrentes (operador + admin)
          → cada usuário grava só o seu registro, nunca sobrescreve o outro
   [POLL] Polling a cada 20 s + visibilitychange reconstroem estado a partir de
-         todos os "proc_*" e "hist_*" do Supabase → 100% sincronizado
+         os registros "proc_*" e "hist_*" do Supabase → 100% sincronizado
   [LIST] _sbFetch("LIST") consulta prefixo no Supabase via PostgREST LIKE
 ================================================================================
 */
