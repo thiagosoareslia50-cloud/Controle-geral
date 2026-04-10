@@ -6030,7 +6030,6 @@ function App() {
     const procCompleto = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || ""));
     const r2 = procCompleto || row;
     // Também buscar dados do fornecedor no histórico para auto-completar
-    const mpBusca = buildMapData(processos);
     const forn2 = r2["FORNECEDOR"] || r2["Fornecedor"] || row["Fornecedor"] || "";
     const org2 = r2["ORGÃO"] || r2["Órgão"] || row["Órgão"] || "";
     // [FIX] Usa APENAS os dados do processo salvo, sem fallbacks históricos.
