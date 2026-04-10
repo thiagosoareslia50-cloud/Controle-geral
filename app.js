@@ -3223,7 +3223,7 @@ function NovoProcessoPage({
       toast("Corrija o CNPJ/CPF antes de salvar.", "error");
       return;
     }
-    if (checarDuplicata(form.numDoc) && !editMode) {
+    if (checarDuplicata(form.numDoc) && (!editMode || String(form.numDoc).trim() !== String(editMode).trim())) {
       // Oferecer o próximo número disponível automaticamente
       if (!window.confirm(
         `⚠️ Número ${form.numDoc} já está em uso!\n\n` +
@@ -3584,13 +3584,13 @@ function NovoProcessoPage({
     onChange: e => upd("numDoc")(e.target.value),
     style: {
       ...iStyle,
-      borderColor: checarDuplicata(form.numDoc) && !editMode
+      borderColor: checarDuplicata(form.numDoc) && (!editMode || String(form.numDoc).trim() !== String(editMode).trim())
         ? "#dc2626"
-        : form.numDoc && !checarDuplicata(form.numDoc) && !editMode
+        : form.numDoc && !(checarDuplicata(form.numDoc) && (!editMode || String(form.numDoc).trim() !== String(editMode).trim()))
           ? "#16a34a"
           : iStyle.borderColor
     }
-  }), checarDuplicata(form.numDoc) && !editMode
+  }), checarDuplicata(form.numDoc) && (!editMode || String(form.numDoc).trim() !== String(editMode).trim())
     ? /*#__PURE__*/React.createElement("div", {
         style: { fontSize: 10.5, color: "#dc2626", marginTop: -10, marginBottom: 8,
                  display: "flex", alignItems: "center", justifyContent: "space-between" }
@@ -3602,7 +3602,7 @@ function NovoProcessoPage({
                    borderRadius: 5, padding: "2px 8px", cursor: "pointer", fontWeight: 700 }
         }, "\uD83D\uDD22 Usar Nº ", nextProcessoNumber)
       )
-    : form.numDoc && !editMode
+    : form.numDoc
       ? /*#__PURE__*/React.createElement("div", {
           style: { fontSize: 10.5, color: "#16a34a", marginTop: -10, marginBottom: 8 }
         }, "\u2705 N\xFAmero dispon\xEDvel")
@@ -5945,6 +5945,7 @@ function App() {
 
   const onSaveEdit = useCallback(async (row, form, numOriginal, user) => {
     const numStr = String(numOriginal);
+    const novoNumStr = String(row["NÚMERO DO DOCUMENTO"] || "").trim();
     const usuario = user?.login || user?.nome || "sistema";
     const novoItem = {
       ...row,
@@ -5955,8 +5956,14 @@ function App() {
       "_usuario": usuario
     };
 
+    // Se o número mudou, remove as chaves antigas
+    if (novoNumStr && novoNumStr !== numStr) {
+      await ST.del(`proc_${numStr}`);
+      await ST.del(`hist_${numStr}`);
+    }
+
     // [ATOM] Upsert individual — não sobrescreve outros processos
-    const resProc = await ST.set(`proc_${numStr}`, novoItem);
+    const resProc = await ST.set(`proc_${novoNumStr || numStr}`, novoItem);
 
     // [FIX] Grava hist completo com TODOS os campos atualizados do row.
     // Antes: usava ...histExist que propagava dados antigos (ex: CONTRATO velho)
@@ -5989,7 +5996,7 @@ function App() {
       "_usuario":              usuario,
       "_registradoEm":         new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" })
     };
-    await ST.set(`hist_${numStr}`, hRow);
+    await ST.set(`hist_${novoNumStr || numStr}`, hRow);
 
     // Re-carrega estado completo
     const [p, h] = await Promise.all([loadAllProcessos(), loadAllHistorico()]);
