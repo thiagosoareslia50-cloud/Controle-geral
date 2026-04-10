@@ -267,7 +267,7 @@ async function loadAllProcessos() {
   });
 }
 
-// loadAllHistorico — garante que TODOS os processos do banco aparecem no
+// loadAllHistorico — garante que todos os processos do banco aparecem no
 // Histórico e no Dashboard, independentemente de terem passado pelo formulário.
 //
 // Camadas (prioridade crescente):
@@ -676,10 +676,10 @@ function _numsSeguros(processos) {
   return (processos || [])
     .map(p => {
       const raw = String(p["NÚMERO DO DOCUMENTO"] || "").trim();
-      // Ignorar fórmulas Excel (=L2+1 etc.) que possam ter escapado da importação
       if (raw.startsWith("=")) return NaN;
-      const n = parseInt(raw, 10);
-      // Limite razoável: números de processo não chegam a 99999
+      const numStr = raw.match(/^\d+/);
+      if (!numStr) return NaN;
+      const n = parseInt(numStr[0], 10);
       return (!isNaN(n) && n > 0 && n < 99999) ? n : NaN;
     })
     .filter(n => !isNaN(n));
@@ -696,13 +696,23 @@ function proxNumero(processos) {
 
 // Verifica se um número específico já está em uso
 function numeroDuplicado(num, processos, numOriginalEdicao) {
-  const n = parseInt(String(num).trim(), 10);
+  const numRaw = String(num).trim();
+  const matchNum = numRaw.match(/^\d+/);
+  if (!matchNum) return false;
+  const n = parseInt(matchNum[0], 10);
   if (isNaN(n) || n <= 0) return false;
+
   return processos.some(p => {
     const raw = String(p["NÚMERO DO DOCUMENTO"] || "").trim();
     if (raw.startsWith("=")) return false;
-    const pn = parseInt(raw, 10);
-    if (numOriginalEdicao && pn === parseInt(String(numOriginalEdicao).trim(), 10)) return false;
+    const matchP = raw.match(/^\d+/);
+    if (!matchP) return false;
+    const pn = parseInt(matchP[0], 10);
+
+    if (numOriginalEdicao) {
+      const matchOrig = String(numOriginalEdicao).trim().match(/^\d+/);
+      if (matchOrig && pn === parseInt(matchOrig[0], 10)) return false;
+    }
     return pn === n;
   });
 }
@@ -2160,7 +2170,7 @@ function PeriodoInput({
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(value || "");
   const ref = useRef(null);
-  // [FIX Bug C] Sincronizar estado local quando value muda externamente (ex: ao carregar edição)
+  // Correção: Bug C] Sincronizar estado local quando value muda externamente (ex: ao carregar edição)
   useEffect(() => { setQ(value || ""); }, [value]);
   const sug = useMemo(() => {
     const ms = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
@@ -3016,7 +3026,7 @@ function NovoProcessoPage({
       notas: row["NOTAS"] || row["NOTA INTERNA"] || "",
       tipo: row["_tipoKey"] || "padrao"
     });
-    // [FIX Bug D] Restaurar estado do checklist a partir de _sits salvo
+    // Correção: Bug D] Restaurar estado do checklist a partir de _sits salvo
     {
       const sits = row["_sits"];
       const tipoKey = row["_tipoKey"] || "padrao";
@@ -5838,7 +5848,7 @@ function App() {
   }, []);
 
   // [POLL] Carga inicial + sincronização a cada 20s + ao voltar para a aba
-  // loadAllHistorico deriva entradas de TODOS os processos do banco →
+  // loadAllHistorico deriva entradas de todos os processos do banco →
   // tudo que foi importado da planilha aparece no Histórico e no Dashboard.
   useEffect(() => {
     const refresh = async () => {
@@ -5880,8 +5890,38 @@ function App() {
     await ST.set("orgaos_config", o);
   };
   const onSave = useCallback(async (row, form, user) => {
-    const numSalvo = String(row["NÚMERO DO DOCUMENTO"] || "").trim();
+    let numSalvo = String(row["NÚMERO DO DOCUMENTO"] || "").trim();
     const usuario = user?.login || user?.nome || "sistema";
+
+    // Concurrency Check: se o documento está sendo SALVO COMO NOVO (draftMode true, ou seja, sem a flag editMode no form que passa pra onSave)
+    // O formulário de criação (draft) não tem um "numOriginal". Apenas na edição temos o `numOriginal` passado ao `onSaveEdit`.
+    // Neste sistema, o fluxo normal chama `onSave` para criar, e `onSaveEdit` para editar.
+    // Então aqui no onSave sabemos que é uma CRIAÇÃO. Podemos conferir se o numero foi pego:
+    const isDupe = await ST.get(`proc_${numSalvo}`);
+    if (isDupe) {
+      const allKeys = await ST.list("proc_");
+      let maxNum = 0;
+      allKeys.forEach(k => {
+        if (k.chave && k.chave.startsWith('proc_')) {
+          const numStr = k.chave.replace('proc_', '').match(/^\d+/);
+          if (numStr) {
+             const n = parseInt(numStr[0], 10);
+             if (!isNaN(n) && n > maxNum) maxNum = n;
+          }
+        }
+      });
+      // Preserve the suffix, e.g. from "12/2024" to "13/2024"
+      const matchNum = numSalvo.match(/^\d+/);
+      if (matchNum) {
+          const suffix = numSalvo.substring(matchNum[0].length);
+          numSalvo = String(maxNum + 1) + suffix;
+      } else {
+          numSalvo = String(maxNum + 1);
+      }
+      row["NÚMERO DO DOCUMENTO"] = numSalvo;
+    }
+
+
     const novoItem = {
       ...row,
       "_tipoKey": form.tipo,
@@ -5965,7 +6005,7 @@ function App() {
     // [ATOM] Upsert individual — não sobrescreve outros processos
     const resProc = await ST.set(`proc_${novoNumStr || numStr}`, novoItem);
 
-    // [FIX] Grava hist completo com TODOS os campos atualizados do row.
+    // Correção:] Grava hist completo com todos os campos atualizados do row.
     // Antes: usava ...histExist que propagava dados antigos (ex: CONTRATO velho)
     // para o hist_* de maior prioridade, sobrescrevendo os dados novos do proc_*.
     const hRow = {
@@ -6020,7 +6060,7 @@ function App() {
   const handleGerarPDFBusca = useCallback(async row => {
     const tipo = row["_tipoKey"] || "padrao";
     const chk = CHK[tipo] || [];
-    // sits: usa checklist salvo em _sits se houver, senão todos marcados
+    // sits: usa checklist salvo em _sits se houver, senão os registros marcados
     const sitsRaw = row["_sits"] || row["_chks"];
     const sits = Array.isArray(sitsRaw) && sitsRaw.length === chk.length ? sitsRaw : Array(chk.length).fill(true);
     // Detectar decisão: processos têm _decisao, histórico tem "Decisão"
@@ -6033,7 +6073,7 @@ function App() {
     const mpBusca = buildMapData(processos);
     const forn2 = r2["FORNECEDOR"] || r2["Fornecedor"] || row["Fornecedor"] || "";
     const org2 = r2["ORGÃO"] || r2["Órgão"] || row["Órgão"] || "";
-    // [FIX] Usa APENAS os dados do processo salvo, sem fallbacks históricos.
+    // Correção:] Usa APENAS os dados do processo salvo, sem fallbacks históricos.
     // Fallbacks por fornecedor/órgão podiam sobrescrever campos que o usuário
     // editou e salvou, fazendo o PDF mostrar dados antigos (ex: CONTRATO velho).
     const d = {
