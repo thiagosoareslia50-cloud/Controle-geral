@@ -2160,7 +2160,6 @@ function PeriodoInput({
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(value || "");
   const ref = useRef(null);
-  // [FIX Bug C] Sincronizar estado local quando value muda externamente (ex: ao carregar edição)
   useEffect(() => { setQ(value || ""); }, [value]);
   const sug = useMemo(() => {
     const ms = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
