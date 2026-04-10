@@ -3016,9 +3016,8 @@ function NovoProcessoPage({
       notas: row["NOTAS"] || row["NOTA INTERNA"] || "",
       tipo: row["_tipoKey"] || "padrao"
     });
-    // [FIX Bug D] Restaurar estado do checklist a partir de _sits salvo
     {
-      const sits = row["_sits"];
+      const sits = row["_sits"] || row["_chks"];
       const tipoKey = row["_tipoKey"] || "padrao";
       const chkLen = (CHK[tipoKey] || []).length;
       if (Array.isArray(sits) && sits.length === chkLen && chkLen > 0) {
