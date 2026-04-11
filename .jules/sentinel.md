@@ -1,0 +1,4 @@
+## 2024-05-24 - [CRITICAL] Remove Hardcoded Supabase Secrets
+**Vulnerability:** Supabase URL and Anon Key were hardcoded in `app.js`.
+**Learning:** Hardcoding secrets exposes them directly in the source control and makes them available to anyone who views the file. These secrets should be injected via environment variables or a configuration file that isn't checked into version control.
+**Prevention:** Use a `config.js` file to mount secrets into `window.ENV` for the browser, and `process.env` for Node.js. Always check for hardcoded API keys and configure `.gitignore` to ignore `.env` or `config.js`.
