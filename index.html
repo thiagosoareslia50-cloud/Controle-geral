@@ -150,6 +150,12 @@
   <!-- ═══════════════════════════════════════════════════════
        SISTEMA PRINCIPAL
        ═══════════════════════════════════════════════════════ -->
+  <script>
+    // Inicia window.ENV vazio para evitar erros se config.js faltar
+    window.ENV = window.ENV || {};
+  </script>
+  <!-- O onerror garante que a falta de config.js não pare o carregamento. -->
+  <script src="config.js" onerror="console.warn('config.js não encontrado. Utilizando fallback local.')"></script>
   <script src="app.js"></script>
 
   <!-- ═══════════════════════════════════════════════════════
