@@ -3739,7 +3739,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
-    title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3783,7 +3784,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
-    title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3902,6 +3904,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar por hist\u00f3rico do fornecedor",
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar por hist\u00f3rico do fornecedor",
     style: {
       width: 38,
       height: 38,
