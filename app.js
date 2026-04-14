@@ -3425,6 +3425,8 @@ function NovoProcessoPage({
       emoji: "\u29C9"
     }), "Duplicar \xDAltimo"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onShowShortcuts && onShowShortcuts(),
+      title: "Atalhos de teclado",
+      "aria-label": "Ver atalhos de teclado",
       style: {
         ...BS("ghost", false, dark),
         height: 34,
@@ -3556,6 +3558,8 @@ function NovoProcessoPage({
     onClick: () => setTab(i)
   }, t))), /*#__PURE__*/React.createElement("button", {
     onClick: () => setCompact(c => !c),
+    title: compact ? "Expandir" : "Contrair",
+    "aria-label": compact ? "Expandir formulário" : "Contrair formulário",
     style: {
       ...BS("ghost", false, dark),
       height: 30,
@@ -3740,6 +3744,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3784,6 +3789,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3902,6 +3908,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
+    "aria-label": objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
     style: {
       width: 38,
       height: 38,
