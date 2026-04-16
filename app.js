@@ -63,10 +63,14 @@ async function loadSqlJs() {
 //  ALTER TABLE cgel_store ENABLE ROW LEVEL SECURITY;
 //  CREATE POLICY "acesso_publico" ON cgel_store FOR ALL USING (true) WITH CHECK (true);
 //
-//  4. Preencha SUPABASE_URL e SUPABASE_ANON_KEY abaixo com os valores do seu projeto.
+//  4. Preencha SUPABASE_URL e SUPABASE_ANON_KEY em um arquivo local config.js
+//     (ver config.example.js).
 //
-const SUPABASE_URL = "https://ogbjhtrrturarxxxkwlg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_PiAtSf5DzNV0dYdNHv1_XA_lQ9pPwDC";
+// [SECURITY] Removed hardcoded secrets to prevent leakage.
+// Credentials are now loaded dynamically from window.ENV or process.env.
+const _env = typeof window !== "undefined" && window.ENV ? window.ENV : (typeof process !== "undefined" ? process.env : {});
+const SUPABASE_URL = _env.SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = _env.SUPABASE_ANON_KEY || "";
 
 // _sbLive: true = conexão Supabase verificada e funcionando
 let _sbLive = false;
