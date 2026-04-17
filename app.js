@@ -63,10 +63,12 @@ async function loadSqlJs() {
 //  ALTER TABLE cgel_store ENABLE ROW LEVEL SECURITY;
 //  CREATE POLICY "acesso_publico" ON cgel_store FOR ALL USING (true) WITH CHECK (true);
 //
-//  4. Preencha SUPABASE_URL e SUPABASE_ANON_KEY abaixo com os valores do seu projeto.
+//  4. Configure SUPABASE_URL e SUPABASE_ANON_KEY no arquivo config.js.
 //
-const SUPABASE_URL = "https://ogbjhtrrturarxxxkwlg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_PiAtSf5DzNV0dYdNHv1_XA_lQ9pPwDC";
+
+const envVars = (typeof window !== "undefined" && window.ENV) || (typeof process !== "undefined" && process.env) || {};
+const SUPABASE_URL = envVars.SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = envVars.SUPABASE_ANON_KEY || "";
 
 // _sbLive: true = conexão Supabase verificada e funcionando
 let _sbLive = false;
@@ -5545,7 +5547,7 @@ function ConfigPage({
           : "\u274C Supabase N\xC3O configurado \u2014 dados salvos apenas neste navegador"
     ),
     /*#__PURE__*/React.createElement("div", {style:{fontSize:11, color: _sbLive ? "#4ade80" : _sbReady ? "#fbbf24" : "#fb923c", marginTop:2}},
-      _sbReady ? ("URL: " + SUPABASE_URL) : "Preencha SUPABASE_URL e SUPABASE_ANON_KEY no in\xEDcio do arquivo app.js"
+      _sbReady ? ("URL: " + SUPABASE_URL) : "Preencha SUPABASE_URL e SUPABASE_ANON_KEY no arquivo config.js"
     )
   )
   ), /*#__PURE__*/React.createElement("div", {
