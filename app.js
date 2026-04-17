@@ -743,72 +743,47 @@ function validarCnpjCpf(raw) {
 }
 
 // ─── MapData ──────────────────────────────────────────────────────────────────
+// ⚡ Bolt: Single-pass iteration for buildMapData reduces time complexity from O(30*N) to O(N).
+// Extracting multiple maps, sets, or lists from the large `processos` dataset in a single pass
+// instead of linear searches/array comprehensions significantly outperforms. Sets are converted
+// to sorted arrays only after the pass completes.
 function buildMapData(processos) {
-  const dct = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (k && v) m[k] = v;
-    }
-    return m;
+  const r = {
+    orgaoSecretario: {}, orgaoContrato: {}, orgaoModalidade: {},
+    fornCnpj: {}, fornObjeto: {}, fornModalidade: {}, fornContrato: {}, fornNf: {},
+    fornTipDoc: {}, fornTipNf: {}, fornPeriodo: {}, fornOrdemCompra: {},
+    cnpjForn: {}, modalContrato: {}, objModalidade: {}, objContrato: {},
+    fornObjetosList: {}, fornContratosList: {}, fornModalidadesList: {},
+    modalContratosList: {}, orgaoContratosList: {}, orgaoModalidadesList: {}
   };
-  const lst = col => {
-    const s = new Set();
-    for (const p of processos) {
-      const v = String(p[col] || "").trim();
-      if (v) s.add(v);
-    }
-    return [...s].sort();
+  const s = {
+    allSecretarios: new Set(), allCnpjs: new Set(), allContratos: new Set(),
+    allObjsHist: new Set(), allDocFiscais: new Set(), allTiposNf: new Set(),
+    allModalidades: new Set(), allOrgaos: new Set(), allFornecedores: new Set()
   };
-  const multi = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (!k || !v) continue;
-      if (!m[k]) m[k] = new Set();
-      m[k].add(v);
-    }
-    const out = {};
-    for (const k in m) out[k] = [...m[k]].sort();
-    return out;
-  };
-  return {
-    orgaoSecretario: dct("ORGÃO", "SECRETARIO"),
-    orgaoContrato: dct("ORGÃO", "CONTRATO"),
-    orgaoModalidade: dct("ORGÃO", "MODALIDADE"),
-    fornCnpj: dct("FORNECEDOR", "CNPJ"),
-    fornObjeto: dct("FORNECEDOR", "OBJETO"),
-    fornModalidade: dct("FORNECEDOR", "MODALIDADE"),
-    fornContrato: dct("FORNECEDOR", "CONTRATO"),
-    fornNf: dct("FORNECEDOR", "Nº"),
-    fornTipDoc: dct("FORNECEDOR", "DOCUMENTO FISCAL"),
-    fornTipNf: dct("FORNECEDOR", "TIPO"),
-    fornPeriodo: dct("FORNECEDOR", "PERÍODO DE REFERÊNCIA"),
-    fornOrdemCompra: dct("FORNECEDOR", "N° ORDEM DE COMPRA"),
-    fornObjetosList: multi("FORNECEDOR", "OBJETO"),
-    fornContratosList: multi("FORNECEDOR", "CONTRATO"),
-    fornModalidadesList: multi("FORNECEDOR", "MODALIDADE"),
-    cnpjForn: dct("CNPJ", "FORNECEDOR"),
-    modalContrato: dct("MODALIDADE", "CONTRATO"),
-    modalContratosList: multi("MODALIDADE", "CONTRATO"),
-    objModalidade: dct("OBJETO", "MODALIDADE"),
-    objContrato: dct("OBJETO", "CONTRATO"),
-    allSecretarios: lst("SECRETARIO"),
-    allCnpjs: lst("CNPJ"),
-    allContratos: lst("CONTRATO"),
-    allObjsHist: lst("OBJETO"),
-    allDocFiscais: lst("DOCUMENTO FISCAL"),
-    allTiposNf: lst("TIPO"),
-    allModalidades: lst("MODALIDADE"),
-    allOrgaos: lst("ORGÃO"),
-    allFornecedores: lst("FORNECEDOR"),
-    orgaoContratosList: multi("ORGÃO", "CONTRATO"),
-    orgaoModalidadesList: multi("ORGÃO", "MODALIDADE"),
-    orgaoContrato: dct("ORGÃO", "CONTRATO"),
-    orgaoModalidade: dct("ORGÃO", "MODALIDADE")
-  };
+  const add = (o, k, v) => { if (!o[k]) o[k] = new Set(); o[k].add(v); };
+
+  for (const p of processos) {
+    const org = String(p["ORGÃO"] || "").trim(), sec = String(p["SECRETARIO"] || "").trim();
+    const con = String(p["CONTRATO"] || "").trim(), mod = String(p["MODALIDADE"] || "").trim();
+    const forn = String(p["FORNECEDOR"] || "").trim(), cnpj = String(p["CNPJ"] || "").trim();
+    const obj = String(p["OBJETO"] || "").trim(), nf = String(p["Nº"] || "").trim();
+    const doc = String(p["DOCUMENTO FISCAL"] || "").trim(), tip = String(p["TIPO"] || "").trim();
+    const per = String(p["PERÍODO DE REFERÊNCIA"] || "").trim(), ord = String(p["N° ORDEM DE COMPRA"] || "").trim();
+
+    if (org) { s.allOrgaos.add(org); if (sec) r.orgaoSecretario[org] = sec; if (con) { r.orgaoContrato[org] = con; add(r.orgaoContratosList, org, con); } if (mod) { r.orgaoModalidade[org] = mod; add(r.orgaoModalidadesList, org, mod); } }
+    if (forn) { s.allFornecedores.add(forn); if (cnpj) r.fornCnpj[forn] = cnpj; if (obj) { r.fornObjeto[forn] = obj; add(r.fornObjetosList, forn, obj); } if (mod) { r.fornModalidade[forn] = mod; add(r.fornModalidadesList, forn, mod); } if (con) { r.fornContrato[forn] = con; add(r.fornContratosList, forn, con); } if (nf) r.fornNf[forn] = nf; if (doc) r.fornTipDoc[forn] = doc; if (tip) r.fornTipNf[forn] = tip; if (per) r.fornPeriodo[forn] = per; if (ord) r.fornOrdemCompra[forn] = ord; }
+    if (cnpj) { s.allCnpjs.add(cnpj); if (forn) r.cnpjForn[cnpj] = forn; }
+    if (mod) { s.allModalidades.add(mod); if (con) { r.modalContrato[mod] = con; add(r.modalContratosList, mod, con); } }
+    if (obj) { s.allObjsHist.add(obj); if (mod) r.objModalidade[obj] = mod; if (con) r.objContrato[obj] = con; }
+    if (sec) s.allSecretarios.add(sec); if (con) s.allContratos.add(con); if (doc) s.allDocFiscais.add(doc); if (tip) s.allTiposNf.add(tip);
+  }
+
+  for (const k in s) r[k] = [...s[k]].sort();
+  for (const k of ["fornObjetosList", "fornContratosList", "fornModalidadesList", "modalContratosList", "orgaoContratosList", "orgaoModalidadesList"]) {
+    for (const key in r[k]) r[k][key] = [...r[k][key]].sort();
+  }
+  return r;
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
