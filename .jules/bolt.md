@@ -1,0 +1,3 @@
+## 2024-04-19 - Single-pass iteration loop optimization
+**Learning:** When extracting multiple maps, sets, or lists from a single large dataset (like `processos`), executing repeated linear searches (e.g. `O(33N)`) results in poor performance. A single-pass iteration (`O(N)`) utilizing explicit hardcoded assignments significantly speeds up the execution and avoids redundant function calls and abstraction overheads in the inner loop.
+**Action:** Identify and refactor instances of multiple linear iterations over the same large dataset into a single-pass loop whenever practical to extract necessary structures. Wait to transform sets to arrays (`Array.from` or `[...set]`) and sort them until after the iteration.
