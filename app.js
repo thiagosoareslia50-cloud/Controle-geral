@@ -65,8 +65,9 @@ async function loadSqlJs() {
 //
 //  4. Preencha SUPABASE_URL e SUPABASE_ANON_KEY abaixo com os valores do seu projeto.
 //
-const SUPABASE_URL = "https://ogbjhtrrturarxxxkwlg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_PiAtSf5DzNV0dYdNHv1_XA_lQ9pPwDC";
+// 🛡️ Sentinel: Removed hardcoded Supabase credentials. Load from environment or config to prevent secret leakage.
+const SUPABASE_URL = (typeof window !== "undefined" && window.ENV && window.ENV.SUPABASE_URL) || (typeof process !== "undefined" && process.env && process.env.SUPABASE_URL) || "";
+const SUPABASE_ANON_KEY = (typeof window !== "undefined" && window.ENV && window.ENV.SUPABASE_ANON_KEY) || (typeof process !== "undefined" && process.env && process.env.SUPABASE_ANON_KEY) || "";
 
 // _sbLive: true = conexão Supabase verificada e funcionando
 let _sbLive = false;

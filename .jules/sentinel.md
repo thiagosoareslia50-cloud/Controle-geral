@@ -1,0 +1,4 @@
+## 2026-04-20 - [Hardcoded Supabase Credentials Removed]
+**Vulnerability:** Supabase URL and anonymous key were hardcoded as plain strings in `app.js`. This is a critical security vulnerability that leaks infrastructure endpoints and access tokens to anyone reading the source code.
+**Learning:** Even static frontend files without a build step need an environment configuration strategy. Storing secrets directly in the code leaves them exposed in version control and client bundles.
+**Prevention:** Always extract environment-specific variables and secrets into a separate configuration file (e.g. `config.js`) that is injected into the global namespace (`window.ENV`) and explicitly ignored by version control (`.gitignore`). Provide a `config.example.js` template to guide developers without leaking real secrets.
