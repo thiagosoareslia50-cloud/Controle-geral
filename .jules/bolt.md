@@ -1,0 +1,3 @@
+## 2024-04-20 - Single-Pass Iteration for Multiple Data Structures
+**Learning:** When extracting multiple maps, sets, or lists from a single large dataset (like `processos`), repeated linear searches or array comprehensions (e.g. multiple loops) cause significant performance overhead due to O(N * M) complexity. A hardcoded single-pass iteration approach with direct variable assignments/modifications significantly outperforms consolidated approaches that rely on array abstractions or dynamic property lookups in the inner loop in Node.js/V8.
+**Action:** Use a single-pass iteration (O(N)) to populate all required structures simultaneously. Wait to convert sets to sorted arrays until after the single pass completes.
