@@ -5827,6 +5827,18 @@ function App() {
     toast
   } = useToast();
 
+  // Performance Optimization (Bolt): O(1) map for process lookups
+  // Preserves the first match of a number per Array.find() convention
+  const processosMap = useMemo(() => {
+    const m = new Map();
+    for (let i = 0; i < processos.length; i++) {
+      const p = processos[i];
+      const k = String(p["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (k && !m.has(k)) m.set(k, p);
+    }
+    return m;
+  }, [processos]);
+
   // [B1] Zera formPct ao sair de "processos"
   const handleSetPage = useCallback(p => {
     // [M4] Avisa se o usuário está editando e vai sair sem salvar
@@ -6027,7 +6039,7 @@ function App() {
     const decRaw = row["_decisao"] || row["Decisão"] || "deferir";
     const isDeferido = decRaw !== "indeferir" && !String(decRaw).toUpperCase().includes("INDE");
     // Buscar dados completos do processo na tabela de processos (pode ter mais dados)
-    const procCompleto = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || ""));
+    const procCompleto = processosMap.get(String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || "").trim());
     const r2 = procCompleto || row;
     // Também buscar dados do fornecedor no histórico para auto-completar
     const mpBusca = buildMapData(processos);
@@ -6072,7 +6084,7 @@ function App() {
       URL.revokeObjectURL(url);
     }, 2000);
     toast("✅ PDF gerado!");
-  }, [appConfig, processos]);
+  }, [appConfig, processos, processosMap]);
   const handleSync = useCallback(async () => {
     if (!_sbReady) {
       toast("⚠️ Supabase não configurado — dados salvos apenas neste navegador.", "warn");
@@ -6309,7 +6321,7 @@ function App() {
     onGerarPDF: handleGerarPDFBusca,
     onEditar: h => {
       // buscar o processo completo pelo número
-      const proc = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(h["Processo"]));
+      const proc = processosMap.get(String(h["Processo"] || "").trim());
       if (proc) {
         handleEditar(proc);
       } else {
