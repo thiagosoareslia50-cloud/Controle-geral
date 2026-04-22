@@ -1,0 +1,3 @@
+## 2025-03-01 - O(N) single-pass iteration performance benefit
+**Learning:** For extracting multiple mapping, sets, and lists from a single large dataset like `processos` in `buildMapData`, running an O(N) loop a single time performs significantly faster than generating these iteratively through multiple loops (which has an O(k*N) complexity, where k is the number of attributes collected, around 32 in this context).
+**Action:** Always favor hardcoded O(N) iteration loops with inline updates to target dictionaries/maps compared to chained or map/reduce style array comprehensions when the number of target mappings is high and the dataset is large.
