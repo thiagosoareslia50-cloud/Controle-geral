@@ -2283,6 +2283,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar atalhos de teclado",
+    title: "Fechar atalhos de teclado",
     style: {
       background: "transparent",
       border: "none",
@@ -3784,6 +3786,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todas as certidões" : "Filtrar certidões por fornecedor",
     style: {
       width: 36,
       height: 36,
