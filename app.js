@@ -5822,6 +5822,22 @@ function App() {
   const [importedMaxNum, setImportedMaxNum] = useState(0);
   // [M2] Ref para pausar polling durante modo edição (evita sobrescrever dados editados)
   const editModeRef = useRef(false);
+
+  // ⚡ Bolt: O(1) Map lookup para processos
+  // Previne iterações O(N) custosas (processos.find) durante geração de PDFs
+  // e mapeamentos do histórico quando lidando com arrays grandes.
+  const processosPorNumero = useMemo(() => {
+    const map = new Map();
+    for (let i = 0; i < processos.length; i++) {
+      const p = processos[i];
+      const num = String(p["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (num && !map.has(num)) {
+        map.set(num, p); // preserva a primeira ocorrência compatível com o .find()
+      }
+    }
+    return map;
+  }, [processos]);
+
   const {
     toasts,
     toast
@@ -6027,7 +6043,8 @@ function App() {
     const decRaw = row["_decisao"] || row["Decisão"] || "deferir";
     const isDeferido = decRaw !== "indeferir" && !String(decRaw).toUpperCase().includes("INDE");
     // Buscar dados completos do processo na tabela de processos (pode ter mais dados)
-    const procCompleto = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || ""));
+    const keyToFind = String(row["NÚMERO DO DOCUMENTO"] || row["Processo"] || "").trim();
+    const procCompleto = processosPorNumero.get(keyToFind);
     const r2 = procCompleto || row;
     // Também buscar dados do fornecedor no histórico para auto-completar
     const mpBusca = buildMapData(processos);
@@ -6309,7 +6326,8 @@ function App() {
     onGerarPDF: handleGerarPDFBusca,
     onEditar: h => {
       // buscar o processo completo pelo número
-      const proc = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]) === String(h["Processo"]));
+      const keyToFind = String(h["Processo"] || "").trim();
+      const proc = processosPorNumero.get(keyToFind);
       if (proc) {
         handleEditar(proc);
       } else {
