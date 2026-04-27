@@ -812,11 +812,34 @@ function buildMapData(processos) {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
+
+async function hashSenha(salt, senha) {
+  const e = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    e.encode(senha),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+  const b = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: e.encode(salt),
+      iterations: 600000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
 async function loadUsers() {
   let u = await ST.get("users");
   if (!u) {
@@ -828,7 +851,8 @@ async function loadUsers() {
         salt,
         nome: "Administrador",
         perfil: "admin",
-        ativo: true
+        ativo: true,
+        v: 2
       }
     };
     await ST.set("users", u);
@@ -839,7 +863,20 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+
+  if (u.v === 2) {
+    return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+  } else {
+    if ((await hashSenhaLegacy(u.salt, senha)) === u.senha) {
+      // Migrate password to v: 2 with PBKDF2 hashing
+      u.senha = await hashSenha(u.salt, senha);
+      u.v = 2;
+      us[login] = u;
+      await ST.set("users", us);
+      return u;
+    }
+    return null;
+  }
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
@@ -4975,7 +5012,8 @@ function UsuariosPage({
           salt,
           nome: novoNome,
           perfil: novoPerfil,
-          ativo: true
+          ativo: true,
+          v: 2
         }
       };
       await ST.set("users", updated);
@@ -5014,7 +5052,8 @@ function UsuariosPage({
       [login]: {
         ...users[login],
         senha: hash,
-        salt
+        salt,
+        v: 2
       }
     };
     await ST.set("users", updated);
