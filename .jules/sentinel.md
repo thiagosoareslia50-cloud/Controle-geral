@@ -1,0 +1,4 @@
+## 2024-05-24 - [Remove Hardcoded Credentials]
+**Vulnerability:** Hardcoded SUPABASE_URL and SUPABASE_ANON_KEY found in `app.js`.
+**Learning:** Storing secrets directly in client-side code exposes them to anyone who can view the source, potentially leading to unauthorized data access or modification. This is a common pattern in SPAs that lack a build step.
+**Prevention:** Use an environment configuration approach (e.g., `config.js` loaded via script tag) that injects variables dynamically without committing them to the repository. The configuration file must be added to `.gitignore`, and a `.example` template must be provided.
