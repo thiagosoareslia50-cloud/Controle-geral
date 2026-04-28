@@ -1,0 +1,3 @@
+## 2024-04-28 - Single-Pass Iteration for Multiple Map Extraction
+**Learning:** When extracting multiple maps, sets, or lists from a single large dataset (`processos`), a single-pass iteration (O(N)) that populates all required structures simultaneously significantly outperforms repeated linear searches or array comprehensions (e.g. 33 separate loops).
+**Action:** Replace multiple `array.map`, `array.filter`, or utility functions like `dct` / `lst` / `multi` that loop over the dataset individually, with a single loop where direct variable assignments/modifications happen for maximum V8 performance over large datasets. Wait to convert sets to sorted arrays until after the single pass completes.
