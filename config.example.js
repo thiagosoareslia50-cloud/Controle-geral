@@ -1,0 +1,5 @@
+// config.example.js
+window.ENV = {
+  SUPABASE_URL: "https://your-project-url.supabase.co",
+  SUPABASE_ANON_KEY: "your-anon-key-here"
+};
