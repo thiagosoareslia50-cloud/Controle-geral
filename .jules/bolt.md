@@ -1,0 +1,3 @@
+## 2024-05-24 - [Performance] Single-pass Iteration for Maps/Sets in buildMapData
+**Learning:** Extracting multiple maps, sets, and lists sequentially by traversing a large dataset (`processos`) repeatedly causes significant overhead (calling find/reduce 34 times on thousands of elements). This multiple-pass approach can be efficiently replaced with a single-pass O(N) iteration that builds out all the necessary data structures simultaneously.
+**Action:** Always favor a single-pass iteration with object/Set property assignments when building multiple indexes/lookups from the same underlying large dataset, and only convert the Sets to Arrays (e.g. for React rendering) at the very end.
