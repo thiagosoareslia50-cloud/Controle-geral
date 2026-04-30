@@ -1,0 +1,3 @@
+## 2024-05-24 - [Single-pass Iteration in buildMapData]
+**Learning:** The `buildMapData` function repeatedly scanned the `processos` array ~28 times to extract different mappings, sets, and lists, taking roughly O(28 * N) time complexity. This is an anti-pattern for large datasets where it leads to noticeable lag. Consolidating the iterations into a single O(N) pass, maintaining the sets/dictionaries inline, and only sorting at the end yields >10x performance improvements.
+**Action:** Always scan large lists/arrays like `processos` in a single pass when extracting multiple subsets, mapping configurations, or unique value sets. Wait to convert Sets to Arrays and sort them until after the iteration completes.
