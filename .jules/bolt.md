@@ -1,0 +1,3 @@
+## 2024-05-17 - [Single-Pass Data Extraction]
+**Learning:** Extracting multiple maps, sets, or lists from a single large dataset like `processos` using multiple functional iterations (`.forEach`, array methods) results in significant performance degradation (O(N * M)). The inner helper functions like `dct`, `lst`, `multi` were running the full list traversal around 30 times.
+**Action:** Replace multiple functional traversals with a single hardcoded iteration loop that populates all required structures simultaneously. Avoid array abstractions in the inner loop and wait to convert structures like `Sets` to arrays after the traversal completes.
