@@ -65,8 +65,9 @@ async function loadSqlJs() {
 //
 //  4. Preencha SUPABASE_URL e SUPABASE_ANON_KEY abaixo com os valores do seu projeto.
 //
-const SUPABASE_URL = "https://ogbjhtrrturarxxxkwlg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_PiAtSf5DzNV0dYdNHv1_XA_lQ9pPwDC";
+const _env = typeof process !== 'undefined' && process.env ? process.env : (window.ENV || {});
+const SUPABASE_URL = _env.SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = _env.SUPABASE_ANON_KEY || "";
 
 // _sbLive: true = conexão Supabase verificada e funcionando
 let _sbLive = false;
