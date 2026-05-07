@@ -1,0 +1,3 @@
+## 2025-02-12 - Object.keys(localStorage) instead of index iteration
+**Learning:** In browser environments, enumerating `localStorage` via an index-based loop (`localStorage.key(i)`) is potentially O(N^2) as the number of stored keys increases, since the engine might execute O(N) operations to locate the i-th key. `Object.keys(localStorage)` securely returns the array of custom string keys in an O(N) operation and excludes prototype methods, eliminating the need for `k &&` null checks.
+**Action:** Use `for (const k of Object.keys(localStorage))` instead of `for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); }` whenever enumerating the entirety of `localStorage` fallback data loops, especially in offline-fallback functions.
