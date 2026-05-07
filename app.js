@@ -812,10 +812,31 @@ function buildMapData(processos) {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+async function hashSenha(salt, senha) {
+  const e = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    e.encode(senha),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: e.encode(salt),
+      iterations: 600000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256 // 32 bytes
+  );
+  return [...new Uint8Array(derivedBits)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 async function loadUsers() {
   let u = await ST.get("users");
@@ -826,6 +847,7 @@ async function loadUsers() {
       admin: {
         senha: hash,
         salt,
+        v: 2,
         nome: "Administrador",
         perfil: "admin",
         ativo: true
@@ -839,7 +861,23 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+
+  if (u.v === 2) {
+    return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+  }
+
+  // Legacy user logic
+  if ((await hashSenhaLegacy(u.salt, senha)) === u.senha) {
+    // Automated migration
+    const novoSalt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
+    const novoHash = await hashSenha(novoSalt, senha);
+    u.salt = novoSalt;
+    u.senha = novoHash;
+    u.v = 2;
+    await ST.set("users", us);
+    return u;
+  }
+  return null;
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
@@ -4973,6 +5011,7 @@ function UsuariosPage({
         [novoLogin]: {
           senha: hash,
           salt,
+          v: 2,
           nome: novoNome,
           perfil: novoPerfil,
           ativo: true
@@ -5014,7 +5053,8 @@ function UsuariosPage({
       [login]: {
         ...users[login],
         senha: hash,
-        salt
+        salt,
+        v: 2
       }
     };
     await ST.set("users", updated);
