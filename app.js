@@ -2080,9 +2080,19 @@ function SearchSelect({
       flex: 1
     }
   }), /*#__PURE__*/React.createElement("span", {
+    role: "button",
+    tabIndex: 0,
+    title: open ? "Fechar opções" : "Abrir opções",
+    "aria-label": open ? "Fechar opções" : "Abrir opções",
     onMouseDown: e => {
       e.preventDefault();
       setOpen(o => !o);
+    },
+    onKeyDown: e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setOpen(o => !o);
+      }
     },
     style: {
       position: "absolute",
@@ -2283,6 +2293,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    title: "Fechar",
+    "aria-label": "Fechar atalhos",
     style: {
       background: "transparent",
       border: "none",
@@ -3739,7 +3751,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
-    title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3783,7 +3796,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
-    title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3902,6 +3916,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico",
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico",
     style: {
       width: 38,
       height: 38,
@@ -4918,6 +4934,8 @@ function HistoricoPage({
       emoji: "\u270F\uFE0F"
     }), "Editar"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onDuplicar && onDuplicar(h),
+      title: "Duplicar processo",
+      "aria-label": "Duplicar processo",
       style: {
         ...BS("secondary", false, dark),
         height: 30,
