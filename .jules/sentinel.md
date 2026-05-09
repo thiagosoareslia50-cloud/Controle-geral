@@ -1,0 +1,4 @@
+## 2024-05-09 - Upgrade Password Hashing to PBKDF2
+**Vulnerability:** Password hashing mechanism used a single iteration of SHA-256 (`crypto.subtle.digest("SHA-256")`), making passwords vulnerable to brute-force and dictionary attacks due to its high speed.
+**Learning:** Legacy, insecure hashing formats can be transparently upgraded to secure formats like PBKDF2 without disrupting users by retaining the legacy function for verification during login and re-hashing the plaintext password to the new secure format upon a successful legacy match. A versioning flag (e.g., `v: 2`) helps identify updated hashes.
+**Prevention:** Always use secure, key derivation functions with high iteration counts (e.g., PBKDF2 with 600,000 iterations, Argon2) for password hashing. Never use simple, fast cryptographic digests (SHA-256, MD5) for this purpose.
