@@ -2283,6 +2283,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    title: "Fechar",
+    "aria-label": "Fechar",
     style: {
       background: "transparent",
       border: "none",
@@ -3740,6 +3742,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3784,6 +3787,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3902,6 +3906,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos do histórico",
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos do histórico",
     style: {
       width: 38,
       height: 38,
