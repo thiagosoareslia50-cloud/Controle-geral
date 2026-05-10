@@ -1,0 +1,3 @@
+## 2024-05-10 - Avoid Index-Based localStorage Iteration
+**Learning:** Index-based iteration using `localStorage.key(i)` within a `for (let i = 0; i < localStorage.length; i++)` loop can lead to an O(N^2) complexity bottleneck as the number of items stored in `localStorage` grows, especially in certain browser storage implementations.
+**Action:** When extracting bulk items from `localStorage`, iterate using `for (const k of Object.keys(localStorage))` to achieve reliable O(N) performance, as `Object.keys` retrieves all enumerable user-stored string keys without repeated boundary checks or method invocation overhead.

@@ -209,9 +209,11 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
+      // ⚡ Bolt: Use Object.keys(localStorage) to iterate instead of index-based localStorage.key(i) loop.
+      // 🎯 Why: Index-based iteration has O(N^2) complexity in some browser implementations
+      //         as localStorage grows, whereas Object.keys is O(N).
+      for (const k of Object.keys(localStorage)) {
+        if (k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
             try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
