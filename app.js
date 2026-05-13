@@ -209,9 +209,9 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
+      // ⚡ Bolt: Replace O(N^2) index-based localStorage loop with O(N) Object.keys() iteration
+      for (const k of Object.keys(localStorage)) {
+        if (k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
             try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
