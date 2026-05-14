@@ -209,9 +209,11 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
+      // ⚡ Bolt: Use Object.keys(localStorage) (O(N)) instead of localStorage.key(i) (O(N^2))
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        if (k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
             try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
