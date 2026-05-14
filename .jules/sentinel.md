@@ -1,0 +1,4 @@
+## 2024-05-14 - Replace weak SHA-256 with PBKDF2 for password hashing
+**Vulnerability:** Passwords were computationally weak because they were "hashed" using a single round of SHA-256. This is incredibly vulnerable to modern cracking techniques (brute force, dictionary attacks) since SHA-256 is extremely fast.
+**Learning:** Fast hash functions (even with salts) are inadequate for passwords. The codebase had a custom auth implementation using fast hashes, rather than a slow hashing algorithm designed for credential storage.
+**Prevention:** Always use a slow, key-stretching hashing algorithm like PBKDF2, bcrypt, or Argon2. Implemented PBKDF2 with Web Crypto API (`crypto.subtle`) using 600,000 iterations to add computational cost, and included a seamless migration (`v: 2` flag) to upgrade legacy users during login.
