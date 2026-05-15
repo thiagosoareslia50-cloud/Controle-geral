@@ -3902,6 +3902,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por fornecedor",
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por fornecedor",
     style: {
       width: 38,
       height: 38,
