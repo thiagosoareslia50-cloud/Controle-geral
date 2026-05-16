@@ -209,9 +209,10 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
+      // ⚡ Bolt Optimization: Replace O(N^2) loop localStorage.key(i) with O(N) Object.keys(localStorage)
+      // Impact: Significantly reduces JS-to-native boundary crossings, speeding up fallback data loading.
+      for (const k of Object.keys(localStorage)) {
+        if (k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
             try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
