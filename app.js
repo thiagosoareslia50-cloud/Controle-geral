@@ -1783,8 +1783,10 @@ const BS = (v = "primary", dis = false, dark = false) => {
   };
 };
 const BtnIco = ({
-  emoji
+  emoji,
+  "aria-hidden": ariaHidden = true
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": ariaHidden,
   style: {
     fontSize: 14,
     marginRight: 2
@@ -3740,6 +3742,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3783,7 +3786,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
-    title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: contMode === "forn" ? "Ver todos" : "Filtrar por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todos" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3902,6 +3906,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
+    "aria-label": objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
     style: {
       width: 38,
       height: 38,
@@ -4251,6 +4257,10 @@ function BuscarPage({
   }, cols.map(c => /*#__PURE__*/React.createElement("th", {
     key: c,
     onClick: () => toggleSort(c),
+    tabIndex: 0,
+    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(c); } },
+    ...(sort.col === c ? { "aria-sort": sort.dir === 1 ? "ascending" : "descending" } : {}),
+    "aria-label": `Ordenar por ${colLabel(c)}`,
     style: {
       padding: "10px 12px",
       textAlign: "left",
@@ -4334,6 +4344,7 @@ function BuscarPage({
       }
     },
     disabled: lPDF !== null,
+    "aria-label": "Gerar PDF",
     style: {
       ...BS("danger", lPDF !== null, dark),
       height: 32,
@@ -4344,6 +4355,7 @@ function BuscarPage({
     emoji: lPDF === i ? "⏳" : "📄"
   }), lPDF === i ? "..." : "PDF"), /*#__PURE__*/React.createElement("button", {
     onClick: () => onEditar && onEditar(p),
+    "aria-label": "Editar processo",
     style: {
       ...BS("orange", false, dark),
       height: 32,
@@ -4354,6 +4366,7 @@ function BuscarPage({
     emoji: "\u270F\uFE0F"
   }), "Editar"), /*#__PURE__*/React.createElement("button", {
     onClick: () => onCarregar(p),
+    "aria-label": "Duplicar processo",
     style: {
       ...BS("secondary", false, dark),
       height: 32,
@@ -4898,6 +4911,7 @@ function HistoricoPage({
     }, /*#__PURE__*/React.createElement("button", {
       onClick: () => handlePDF(h, i),
       disabled: lPDF !== null,
+      "aria-label": "Gerar PDF",
       style: {
         ...BS("danger", lPDF !== null, dark),
         height: 30,
@@ -4908,6 +4922,7 @@ function HistoricoPage({
       emoji: lPDF === i ? "⏳" : "📄"
     }), lPDF === i ? "..." : "PDF"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onEditar && onEditar(h),
+      "aria-label": "Editar processo",
       style: {
         ...BS("orange", false, dark),
         height: 30,
@@ -4918,6 +4933,7 @@ function HistoricoPage({
       emoji: "\u270F\uFE0F"
     }), "Editar"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onDuplicar && onDuplicar(h),
+      "aria-label": "Duplicar processo",
       style: {
         ...BS("secondary", false, dark),
         height: 30,
