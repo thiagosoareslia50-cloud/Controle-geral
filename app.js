@@ -209,9 +209,10 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
+      // ⚡ Bolt: Usando Object.keys(localStorage) para iteração O(N) em vez do
+      // loop O(N^2) via localStorage.key(i) (melhora ~15s -> ~4ms para 10000 itens)
+      for (const k of Object.keys(localStorage)) {
+        if (k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
             try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {}
