@@ -820,18 +820,7 @@ async function hashSenha(salt, senha) {
 async function loadUsers() {
   let u = await ST.get("users");
   if (!u) {
-    const salt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
-    const hash = await hashSenha(salt, "admin123");
-    u = {
-      admin: {
-        senha: hash,
-        salt,
-        nome: "Administrador",
-        perfil: "admin",
-        ativo: true
-      }
-    };
-    await ST.set("users", u);
+    u = {};
   }
   return u;
 }
@@ -2419,6 +2408,12 @@ function LoginPage({
   const [tent, setTent] = useState(0);
   const [bloq, setBloq] = useState(false);
   const [count, setCount] = useState(0);
+  const [isFirstRun, setIsFirstRun] = useState(false);
+  useEffect(() => {
+    loadUsers().then(u => {
+      if (!u || Object.keys(u).length === 0) setIsFirstRun(true);
+    });
+  }, []);
   useEffect(() => {
     if (!bloq || count <= 0) return;
     const t = setInterval(() => setCount(c => {
@@ -2435,6 +2430,20 @@ function LoginPage({
     if (bloq) return;
     setLoading(true);
     setErro("");
+    if (isFirstRun) {
+      if (login.trim() !== "admin") {
+        setLoading(false);
+        setErro("O primeiro usuário deve ser 'admin'.");
+        return;
+      }
+      const salt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
+      const hash = await hashSenha(salt, senha);
+      const newU = { admin: { senha: hash, salt, nome: "Administrador", perfil: "admin", ativo: true } };
+      await ST.set("users", newU);
+      setLoading(false);
+      onLogin({ ...newU.admin, login: "admin" });
+      return;
+    }
     const u = await checkLogin(login.trim(), senha);
     setLoading(false);
     if (u) {
@@ -2492,7 +2501,19 @@ function LoginPage({
       color: "#4a6494",
       marginTop: 4
     }
-  }, "Controladoria Geral \u2014 Sistema de Pagamentos")), erro && /*#__PURE__*/React.createElement("div", {
+  }, "Controladoria Geral \u2014 Sistema de Pagamentos")), isFirstRun && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0f172a",
+      border: "1px solid #3b82f6",
+      borderRadius: 8,
+      padding: "10px 14px",
+      marginBottom: 16,
+      fontSize: 12,
+      color: "#93c5fd",
+      fontWeight: 600,
+      textAlign: "center"
+    }
+  }, "Primeiro acesso: defina a senha para o usuário 'admin'."), erro && /*#__PURE__*/React.createElement("div", {
     style: {
       background: "#450a0a",
       border: "1px solid #dc2626",
@@ -2540,7 +2561,7 @@ function LoginPage({
       fontSize: 14,
       marginTop: 4
     }
-  }, bloq ? `Aguarde ${Math.floor(count / 60)}m${count % 60}s…` : loading ? "Verificando…" : "→ Entrar")));
+  }, bloq ? `Aguarde ${Math.floor(count / 60)}m${count % 60}s…` : loading ? "Verificando…" : isFirstRun ? "Configurar Acesso" : "→ Entrar")));
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
