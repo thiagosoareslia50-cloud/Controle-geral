@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -2282,6 +2283,7 @@ function ShortcutsModal({
       color: tc
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Fechar atalhos de teclado",
     onClick: onClose,
     style: {
       background: "transparent",
@@ -2369,6 +2371,7 @@ function PdfInstrucoes({
       marginBottom: 18
     }
   }, "O arquivo ", /*#__PURE__*/React.createElement("b", null, fileName), " foi baixado.", /*#__PURE__*/React.createElement("br", null), "Para converter em PDF:", /*#__PURE__*/React.createElement("br", null), "1. Abra no navegador", /*#__PURE__*/React.createElement("br", null), "2. Pressione ", /*#__PURE__*/React.createElement("b", null, "Ctrl+P"), /*#__PURE__*/React.createElement("br", null), "3. Escolha ", /*#__PURE__*/React.createElement("b", null, "\"Salvar como PDF\"")), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Fechar aviso de download",
     onClick: onClose,
     style: {
       ...BS("primary", false, false),
@@ -3738,6 +3741,7 @@ function NovoProcessoPage({
     dark: dark,
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
@@ -3782,6 +3786,7 @@ function NovoProcessoPage({
     dark: dark,
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
@@ -3901,6 +3906,8 @@ function NovoProcessoPage({
     onChange: onObjChange,
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos pelo histórico do fornecedor",
+    title: objMode === "historico" ? "Ver todos" : "Filtrar pelo histórico do fornecedor",
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
     style: {
       width: 38,
@@ -4537,6 +4544,7 @@ function DashboardPage({
           anos.map(a => /*#__PURE__*/React.createElement("option", { key: a, value: a }, a))
         ),
         (filtOrg || filtAno) && /*#__PURE__*/React.createElement("button", {
+          "aria-label": "Limpar filtros de busca",
           onClick: () => { setFiltOrg(""); setFiltAno(""); },
           style: { fontSize: 12, padding: "6px 12px", background: "#fee2e2",
             border: "1px solid #fecaca", borderRadius: 7, color: "#dc2626", cursor: "pointer" }
