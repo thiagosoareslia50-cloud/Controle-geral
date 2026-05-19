@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -3751,7 +3752,9 @@ function NovoProcessoPage({
       fontSize: 15,
       alignSelf: "flex-start",
       marginTop: 1
-    }
+    },
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
+    title: modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor"
   }, modMode === "forn" ? "📂" : "🏢"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -3795,7 +3798,9 @@ function NovoProcessoPage({
       fontSize: 15,
       alignSelf: "flex-start",
       marginTop: 1
-    }
+    },
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
+    title: contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor"
   }, contMode === "forn" ? "📂" : "🏢"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -3912,7 +3917,9 @@ function NovoProcessoPage({
       cursor: "pointer",
       fontSize: 16,
       marginBottom: 14
-    }
+    },
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico",
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico"
   }, objMode === "historico" ? "📂" : "🏢"))), /*#__PURE__*/React.createElement(SH, {
     icon: "\uD83D\uDCC5",
     title: "Ateste e Decis\xE3o",
