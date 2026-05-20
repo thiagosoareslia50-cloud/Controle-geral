@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -2858,6 +2859,8 @@ function Sidebar({
       gap: 4
     }
   }, "\u23CF Sair")), /*#__PURE__*/React.createElement("button", {
+    "aria-label": dark ? "Mudar para modo claro" : "Mudar para modo escuro",
+    title: dark ? "Modo Claro" : "Modo Escuro",
     onClick: onToggleDark,
     style: {
       height: 32,
@@ -3738,6 +3741,7 @@ function NovoProcessoPage({
     dark: dark,
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidades por fornecedor",
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
@@ -3782,6 +3786,7 @@ function NovoProcessoPage({
     dark: dark,
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contratos por fornecedor",
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
@@ -3901,6 +3906,8 @@ function NovoProcessoPage({
     onChange: onObjChange,
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico",
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objetos por histórico",
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
     style: {
       width: 38,
