@@ -819,21 +819,7 @@ async function hashSenha(salt, senha) {
 }
 async function loadUsers() {
   let u = await ST.get("users");
-  if (!u) {
-    const salt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
-    const hash = await hashSenha(salt, "admin123");
-    u = {
-      admin: {
-        senha: hash,
-        salt,
-        nome: "Administrador",
-        perfil: "admin",
-        ativo: true
-      }
-    };
-    await ST.set("users", u);
-  }
-  return u;
+  return u || {};
 }
 async function checkLogin(login, senha) {
   const us = await loadUsers(),
@@ -2419,6 +2405,12 @@ function LoginPage({
   const [tent, setTent] = useState(0);
   const [bloq, setBloq] = useState(false);
   const [count, setCount] = useState(0);
+  const [isFirstRun, setIsFirstRun] = useState(false);
+  useEffect(() => {
+    loadUsers().then(us => {
+      if (Object.keys(us).length === 0) setIsFirstRun(true);
+    });
+  }, []);
   useEffect(() => {
     if (!bloq || count <= 0) return;
     const t = setInterval(() => setCount(c => {
@@ -2435,6 +2427,26 @@ function LoginPage({
     if (bloq) return;
     setLoading(true);
     setErro("");
+
+    if (isFirstRun) {
+      if (login.trim() !== "admin") {
+        setErro("Primeiro acesso deve ser com login 'admin'");
+        setLoading(false); return;
+      }
+      if (senha.length < 6) {
+        setErro("A senha deve ter no mínimo 6 caracteres");
+        setLoading(false); return;
+      }
+      const salt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
+      const hash = await hashSenha(salt, senha);
+      const uObj = { admin: { senha: hash, salt, nome: "Administrador", perfil: "admin", ativo: true } };
+      await ST.set("users", uObj);
+      setIsFirstRun(false);
+      onLogin({ ...uObj.admin, login: "admin" });
+      setLoading(false);
+      return;
+    }
+
     const u = await checkLogin(login.trim(), senha);
     setLoading(false);
     if (u) {
@@ -2492,7 +2504,19 @@ function LoginPage({
       color: "#4a6494",
       marginTop: 4
     }
-  }, "Controladoria Geral \u2014 Sistema de Pagamentos")), erro && /*#__PURE__*/React.createElement("div", {
+  }, "Controladoria Geral \u2014 Sistema de Pagamentos")), isFirstRun && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "rgba(239,209,3,.15)",
+      border: "1px solid " + MUN.gold,
+      borderRadius: 8,
+      padding: "10px 14px",
+      marginBottom: 16,
+      fontSize: 12,
+      color: MUN.gold,
+      fontWeight: 600,
+      textAlign: "center"
+    }
+  }, "Primeiro acesso: crie a senha do admin"), erro && /*#__PURE__*/React.createElement("div", {
     style: {
       background: "#450a0a",
       border: "1px solid #dc2626",
@@ -2540,7 +2564,7 @@ function LoginPage({
       fontSize: 14,
       marginTop: 4
     }
-  }, bloq ? `Aguarde ${Math.floor(count / 60)}m${count % 60}s…` : loading ? "Verificando…" : "→ Entrar")));
+  }, bloq ? `Aguarde ${Math.floor(count / 60)}m${count % 60}s…` : loading ? "Verificando…" : isFirstRun ? "Configurar Acesso" : "→ Entrar")));
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
