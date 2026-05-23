@@ -1,0 +1,4 @@
+## 2026-05-23 - Hardcoded Credentials in First Run Initialization
+**Vulnerability:** The application was automatically initializing an 'admin' user with a hardcoded password ('admin123') in `loadUsers()` if the user database was empty, introducing a severe security risk (CWE-798).
+**Learning:** This approach was likely a development shortcut left in production. Hardcoding credentials in source code exposes them to anyone with code access and removes the requirement for a secure, user-directed setup phase, undermining the authentication layer entirely.
+**Prevention:** Implement a secure 'First Run' flow where the application detects an uninitialized state and forces the initial administrator to establish a strong, custom password during their first access, without hardcoding any fallback secrets in the source code.
