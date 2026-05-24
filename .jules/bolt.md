@@ -1,0 +1,3 @@
+## 2024-05-24 - Avoid O(N^2) complexity with localStorage.key(i)
+**Learning:** Enumerating `localStorage` via an index-based loop (`localStorage.key(i)`) is significantly slower (potentially O(N^2)) than using `Object.entries(localStorage)` or `Object.keys(localStorage)` (O(N)), as the number of stored keys increases. Using `Object.keys(localStorage)` is safe because it only returns user-stored enumerable keys, strictly as strings, making null checks unnecessary.
+**Action:** Always prefer `Object.keys(localStorage)` or `Object.entries(localStorage)` when iterating over localStorage items, especially for large potential datasets (like the offline fallback caching used in `ST.list`).
