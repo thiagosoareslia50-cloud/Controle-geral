@@ -1,0 +1,3 @@
+## 2024-05-25 - localStorage Enumeration Performance
+**Learning:** Iterating over `localStorage` using an index-based loop (`for (let i=0; i<localStorage.length; i++) { localStorage.key(i) }`) creates significant performance overhead due to repeated JS-to-native API calls per iteration. In some environments or mocks, this can even degrade to O(N^2) complexity.
+**Action:** When extracting multiple items from `localStorage`, always use `Object.keys(localStorage)` or `Object.entries(localStorage)` to retrieve all keys in a single O(N) operation, which also ensures keys are strings and simplifies null-checks.
