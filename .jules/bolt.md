@@ -1,0 +1,3 @@
+## 2024-05-26 - Optimize localStorage iteration
+**Learning:** Enumerating `localStorage` via an index-based loop (`localStorage.key(i)`) is significantly slower (potentially O(N^2)) than using `Object.keys(localStorage)` (O(N)), as the number of stored keys increases. This creates a bottleneck when filtering local storage for a specific prefix, as seen in the offline fallback of `ST.list`.
+**Action:** Always prefer `Object.keys(localStorage)` over `for(let i=0; i<localStorage.length; i++)` when iterating over local storage keys in JS environments, as it extracts the keys array directly from the internal representation rather than causing repeated proxy lookups.
