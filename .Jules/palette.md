@@ -1,0 +1,3 @@
+## 2024-05-27 - Hide decorative icons from screen readers
+**Learning:** The application extensively uses a custom `BtnIco` component to render emojis/icons alongside text or inside buttons. By default, these icons were exposed to screen readers, which can lead to redundant or confusing announcements (e.g., reading out "Smiling face with sunglasses" instead of just the actionable text).
+**Action:** When creating reusable components for decorative UI elements (like emojis or icons), ensure they include `aria-hidden="true"` by default. Rely on explicit `aria-label` attributes on the parent interactive elements (like buttons or links) to provide context for assistive technologies.
