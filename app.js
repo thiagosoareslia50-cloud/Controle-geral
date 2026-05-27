@@ -208,9 +208,13 @@ const ST = {
     }
     // Fallback offline: lê localStorage deste navegador
     try {
+      // [Bolt Performance] Use Object.keys(localStorage) instead of localStorage.key(i)
+      // Iterating via length/key() is O(N^2) due to JS-to-C++ boundary crossings or proxy lookups.
+      // Object.keys is O(N) and significantly faster for large amounts of stored data.
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
