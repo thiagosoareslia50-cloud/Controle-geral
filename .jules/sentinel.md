@@ -1,0 +1,4 @@
+## 2024-05-28 - Upgrade Password Hashing from SHA-256 to PBKDF2
+**Vulnerability:** Weak password hashing using a single iteration of SHA-256 (`crypto.subtle.digest`).
+**Learning:** The application previously relied on a fast, un-iterated cryptographic hash function which is susceptible to brute-force and dictionary attacks. By leveraging the existing `crypto.subtle` Web Crypto API, it's possible to securely upgrade the hash algorithm to PBKDF2 with 100,000 iterations entirely in the client-side/browser environment without adding any dependencies.
+**Prevention:** Always use a slow, key derivation function (like PBKDF2, Argon2, or bcrypt) for hashing passwords instead of standard digest functions like SHA-256. Ensure an opportunistic upgrade path is in place to gracefully migrate legacy user hashes during login without locking them out.
