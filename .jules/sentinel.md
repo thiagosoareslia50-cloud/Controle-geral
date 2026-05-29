@@ -1,0 +1,4 @@
+## 2024-05-29 - [CRITICAL] Replace Weak Password Hashing with PBKDF2
+**Vulnerability:** Passwords were automatically hashed using single-iteration SHA-256 via `crypto.subtle.digest`, making them susceptible to rapid offline brute-force and dictionary attacks if the database is exposed.
+**Learning:** Legacy systems might use simple one-pass hashing for simplicity. When replacing it with a secure algorithm like PBKDF2 with a high iteration count (e.g. 100,000 iterations), one must maintain backward compatibility. Users with old hashes would be locked out if the new algorithm is simply swapped in.
+**Prevention:** Always implement a transparent opportunistic upgrade flow when upgrading password schemas: verify against the new algorithm first, fallback to the legacy algorithm if that fails, and upon successful legacy authentication, securely rehash the plaintext password with the new algorithm and update the stored record transparently.
