@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": true,
   style: {
     fontSize: 14,
     marginRight: 2
@@ -2283,6 +2284,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar atalhos",
+    title: "Fechar",
     style: {
       background: "transparent",
       border: "none",
@@ -2370,6 +2373,7 @@ function PdfInstrucoes({
     }
   }, "O arquivo ", /*#__PURE__*/React.createElement("b", null, fileName), " foi baixado.", /*#__PURE__*/React.createElement("br", null), "Para converter em PDF:", /*#__PURE__*/React.createElement("br", null), "1. Abra no navegador", /*#__PURE__*/React.createElement("br", null), "2. Pressione ", /*#__PURE__*/React.createElement("b", null, "Ctrl+P"), /*#__PURE__*/React.createElement("br", null), "3. Escolha ", /*#__PURE__*/React.createElement("b", null, "\"Salvar como PDF\"")), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Entendido, fechar aviso",
     style: {
       ...BS("primary", false, false),
       width: "100%",
@@ -3416,6 +3420,8 @@ function NovoProcessoPage({
     }, "\u2715 Cancelar Edi\xE7\xE3o"), /*#__PURE__*/React.createElement("button", {
       onClick: handleDuplicarUltimo,
       disabled: !ultimoProcesso,
+      "aria-label": "Duplicar último processo",
+      title: "Duplicar último",
       style: {
         ...BS("secondary", !ultimoProcesso, dark),
         height: 34,
@@ -4354,6 +4360,8 @@ function BuscarPage({
     emoji: "\u270F\uFE0F"
   }), "Editar"), /*#__PURE__*/React.createElement("button", {
     onClick: () => onCarregar(p),
+    "aria-label": "Duplicar processo",
+    title: "Duplicar",
     style: {
       ...BS("secondary", false, dark),
       height: 32,
@@ -4918,6 +4926,8 @@ function HistoricoPage({
       emoji: "\u270F\uFE0F"
     }), "Editar"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onDuplicar && onDuplicar(h),
+      "aria-label": "Duplicar processo",
+      title: "Duplicar",
       style: {
         ...BS("secondary", false, dark),
         height: 30,
