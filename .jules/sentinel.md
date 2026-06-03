@@ -1,0 +1,4 @@
+## 2024-06-03 - Weak Password Hashing (Un-iterated SHA-256)
+**Vulnerability:** Passwords were automatically hashed using a single round of SHA-256, making them extremely susceptible to dictionary and brute-force attacks.
+**Learning:** The previous implementation traded security for simplicity by using the Web Crypto API's basic digest function without any iterations. While simple, this is cryptographically inadequate for securing user passwords.
+**Prevention:** Always implement a key derivation function (KDF) like PBKDF2 or Argon2 for password hashing, leveraging high iteration counts to mathematically delay brute-forcing. When upgrading a system with an existing weak hashing scheme, an opportunistic upgrade mechanism must be implemented to seamlessly migrate users upon their next successful login.
