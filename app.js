@@ -209,8 +209,11 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
+      // [Bolt Performance] Object.keys(localStorage) is used instead of localStorage.key(i) inside a loop
+      // to avoid O(N^2) proxy lookup behavior and JS-to-C++ boundary crossing overhead.
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
