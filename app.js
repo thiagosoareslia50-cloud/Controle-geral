@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -4353,6 +4354,8 @@ function BuscarPage({
   }, /*#__PURE__*/React.createElement(BtnIco, {
     emoji: "\u270F\uFE0F"
   }), "Editar"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Duplicar Processo",
+    title: "Duplicar Processo",
     onClick: () => onCarregar(p),
     style: {
       ...BS("secondary", false, dark),
