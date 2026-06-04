@@ -209,8 +209,9 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
+      // [Bolt Performance] Replaced slow index-based localStorage loop with Object.keys() for O(N) extraction
+      const keys = Object.keys(localStorage);
+      for (const k of keys) {
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
