@@ -209,8 +209,11 @@ const ST = {
     // Fallback offline: lê localStorage deste navegador
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
+      // [Bolt Performance] Use Object.keys to extract all keys at once
+      // Avoids O(N^2) lookup boundary-crossing bottleneck with localStorage.key(i)
+      const keys = Object.keys(localStorage);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) {
@@ -744,28 +747,34 @@ function validarCnpjCpf(raw) {
 
 // ─── MapData ──────────────────────────────────────────────────────────────────
 function buildMapData(processos) {
+  // [Bolt Performance] Pre-calculate trimmed values in one pass
+  // Avoids O(N*M) redundant string encodings and trimming inside loop iterations.
+  const cache = processos.map(p => {
+    const obj = {};
+    for (const key in p) obj[key] = p[key] ? String(p[key]).trim() : "";
+    return obj;
+  });
+
   const dct = (kC, vC) => {
     const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
+    for (const p of cache) {
+      const k = p[kC] || "", v = p[vC] || "";
       if (k && v) m[k] = v;
     }
     return m;
   };
   const lst = col => {
     const s = new Set();
-    for (const p of processos) {
-      const v = String(p[col] || "").trim();
+    for (const p of cache) {
+      const v = p[col] || "";
       if (v) s.add(v);
     }
     return [...s].sort();
   };
   const multi = (kC, vC) => {
     const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
+    for (const p of cache) {
+      const k = p[kC] || "", v = p[vC] || "";
       if (!k || !v) continue;
       if (!m[k]) m[k] = new Set();
       m[k].add(v);
