@@ -2858,6 +2858,8 @@ function Sidebar({
       gap: 4
     }
   }, "\u23CF Sair")), /*#__PURE__*/React.createElement("button", {
+    "aria-label": dark ? "Ativar tema claro" : "Ativar tema escuro",
+    title: dark ? "Ativar tema claro" : "Ativar tema escuro",
     onClick: onToggleDark,
     style: {
       height: 32,
