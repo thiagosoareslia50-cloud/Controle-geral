@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -3556,6 +3557,8 @@ function NovoProcessoPage({
     onClick: () => setTab(i)
   }, t))), /*#__PURE__*/React.createElement("button", {
     onClick: () => setCompact(c => !c),
+    title: compact ? "Expandir abas" : "Condensar abas",
+    "aria-label": compact ? "Expandir abas" : "Condensar abas",
     style: {
       ...BS("ghost", false, dark),
       height: 30,
@@ -3739,7 +3742,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
-    title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: modMode === "forn" ? "Ver todas modalidades" : "Filtrar modalidades por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas modalidades" : "Filtrar modalidades por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -3783,7 +3787,8 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
-    title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    title: contMode === "forn" ? "Ver todos contratos" : "Filtrar contratos por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todos contratos" : "Filtrar contratos por fornecedor",
     style: {
       width: 36,
       height: 36,
