@@ -1,0 +1,3 @@
+## 2024-05-24 - Interactive Divs need ARIA roles and Keyboard Support
+**Learning:** In React applications without JSX, navigation items (like `NavItem` in `Sidebar`) implemented as `div`s with `onClick` handlers are inaccessible to keyboard and screen reader users unless explicitly assigned `role="button"`, `tabIndex={0}`, and appropriate keyboard event listeners (like `onKeyDown` for Enter/Space).
+**Action:** When creating or modifying clickable `div`s, ensure they have `role="button"`, `tabIndex={0}`, `aria-label` or `aria-current` (if applicable), and an `onKeyDown` handler to support keyboard activation, improving overall accessibility.
