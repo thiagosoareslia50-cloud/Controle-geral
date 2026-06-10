@@ -1785,6 +1785,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -2594,7 +2595,17 @@ function Sidebar({
   }) => {
     const active = page === k;
     return /*#__PURE__*/React.createElement("div", {
+      role: "button",
+      tabIndex: 0,
+      "aria-label": label,
+      "aria-current": active ? "page" : undefined,
       onClick: () => setPage(k),
+      onKeyDown: e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setPage(k);
+        }
+      },
       style: {
         display: "flex",
         alignItems: "center",
