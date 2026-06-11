@@ -1,0 +1,4 @@
+## 2024-05-24 - Upgraded Password Hashing to PBKDF2
+**Vulnerability:** Weak, un-iterated SHA-256 algorithm used for password hashing (`crypto.subtle.digest("SHA-256", ...)`). This allows for fast offline brute-force or dictionary attacks if the database is leaked.
+**Learning:** The legacy system lacked a computationally expensive key derivation function, making it vulnerable despite salting. When upgrading hashing algorithms in a production system without central user registries capable of forced password resets, you must maintain backwards compatibility to avoid locking out existing users.
+**Prevention:** Always use an adaptive key derivation function like PBKDF2, Argon2, or bcrypt for storing passwords. If upgrading, implement an opportunistic upgrade flow during authentication where successful legacy logins seamlessly trigger a re-hash using the new algorithm, silently updating the stored credentials.
