@@ -744,11 +744,26 @@ function validarCnpjCpf(raw) {
 
 // ─── MapData ──────────────────────────────────────────────────────────────────
 function buildMapData(processos) {
+    // [Bolt Performance] Dynamic lazy-caching to avoid repeated String(val).trim()
+  // Uses a WeakMap to cache trimmed properties per object without iterating all keys
+  // or creating full object copies.
+  const trimCache = new WeakMap();
+  const getVal = (p, col) => {
+    let rowCache = trimCache.get(p);
+    if (!rowCache) {
+      rowCache = Object.create(null);
+      trimCache.set(p, rowCache);
+    }
+    if (rowCache[col] !== undefined) return rowCache[col];
+    const val = String(p[col] || "").trim();
+    rowCache[col] = val;
+    return val;
+  };
+
   const dct = (kC, vC) => {
     const m = {};
     for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
+      const k = getVal(p, kC), v = getVal(p, vC);
       if (k && v) m[k] = v;
     }
     return m;
@@ -756,7 +771,7 @@ function buildMapData(processos) {
   const lst = col => {
     const s = new Set();
     for (const p of processos) {
-      const v = String(p[col] || "").trim();
+      const v = getVal(p, col);
       if (v) s.add(v);
     }
     return [...s].sort();
@@ -764,8 +779,7 @@ function buildMapData(processos) {
   const multi = (kC, vC) => {
     const m = {};
     for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
+      const k = getVal(p, kC), v = getVal(p, vC);
       if (!k || !v) continue;
       if (!m[k]) m[k] = new Set();
       m[k].add(v);
