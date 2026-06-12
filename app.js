@@ -812,10 +812,16 @@ function buildMapData(processos) {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+async function hashSenha(salt, senha) {
+  const e = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey("raw", e.encode(senha), "PBKDF2", false, ["deriveBits"]);
+  const derivedBits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: e.encode(salt), iterations: 100000, hash: "SHA-256" }, keyMaterial, 256);
+  return "pbkdf2$" + [...new Uint8Array(derivedBits)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 async function loadUsers() {
   let u = await ST.get("users");
@@ -839,7 +845,15 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+  if (u.senha.startsWith("pbkdf2$")) {
+    return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+  }
+  if ((await hashSenhaLegacy(u.salt, senha)) === u.senha) {
+    u.senha = await hashSenha(u.salt, senha);
+    await ST.set("users", us); // Opportunistic upgrade
+    return u;
+  }
+  return null;
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
