@@ -2283,6 +2283,7 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar",
     style: {
       background: "transparent",
       border: "none",
@@ -2370,6 +2371,7 @@ function PdfInstrucoes({
     }
   }, "O arquivo ", /*#__PURE__*/React.createElement("b", null, fileName), " foi baixado.", /*#__PURE__*/React.createElement("br", null), "Para converter em PDF:", /*#__PURE__*/React.createElement("br", null), "1. Abra no navegador", /*#__PURE__*/React.createElement("br", null), "2. Pressione ", /*#__PURE__*/React.createElement("b", null, "Ctrl+P"), /*#__PURE__*/React.createElement("br", null), "3. Escolha ", /*#__PURE__*/React.createElement("b", null, "\"Salvar como PDF\"")), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar",
     style: {
       ...BS("primary", false, false),
       width: "100%",
@@ -3598,6 +3600,7 @@ function NovoProcessoPage({
         /*#__PURE__*/React.createElement("span", null, "\u26A0\uFE0F N\xFAmero ", form.numDoc, " j\xE1 em uso!"),
         /*#__PURE__*/React.createElement("button", {
           onClick: () => { upd("numDoc")(String(nextProcessoNumber)); setForm(f => ({...f, numDoc: String(nextProcessoNumber)})); },
+          "aria-label": `Usar número ${nextProcessoNumber}`,
           style: { fontSize: 10, background: "#16a34a", color: "#fff", border: "none",
                    borderRadius: 5, padding: "2px 8px", cursor: "pointer", fontWeight: 700 }
         }, "\uD83D\uDD22 Usar Nº ", nextProcessoNumber)
@@ -4354,6 +4357,8 @@ function BuscarPage({
     emoji: "\u270F\uFE0F"
   }), "Editar"), /*#__PURE__*/React.createElement("button", {
     onClick: () => onCarregar(p),
+    "aria-label": "Carregar Processo",
+    title: "Carregar Processo",
     style: {
       ...BS("secondary", false, dark),
       height: 32,
@@ -4538,6 +4543,7 @@ function DashboardPage({
         ),
         (filtOrg || filtAno) && /*#__PURE__*/React.createElement("button", {
           onClick: () => { setFiltOrg(""); setFiltAno(""); },
+          "aria-label": "Limpar filtros",
           style: { fontSize: 12, padding: "6px 12px", background: "#fee2e2",
             border: "1px solid #fecaca", borderRadius: 7, color: "#dc2626", cursor: "pointer" }
         }, "\u2715 Limpar"),
@@ -4918,6 +4924,8 @@ function HistoricoPage({
       emoji: "\u270F\uFE0F"
     }), "Editar"), /*#__PURE__*/React.createElement("button", {
       onClick: () => onDuplicar && onDuplicar(h),
+      "aria-label": "Duplicar Processo",
+      title: "Duplicar Processo",
       style: {
         ...BS("secondary", false, dark),
         height: 30,
