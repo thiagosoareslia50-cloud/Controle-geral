@@ -1,0 +1,4 @@
+## 2025-02-23 - Upgrade weak password hashing to PBKDF2
+**Vulnerability:** Passwords were being hashed using an un-iterated SHA-256 algorithm, making them highly susceptible to brute-force and dictionary attacks if the database is compromised.
+**Learning:** When upgrading client-side authentication schemas, it is necessary to maintain backward compatibility by keeping the legacy hash function and implementing a transparent upgrade path. This ensures that existing users are not locked out of their accounts while their passwords are automatically re-hashed with the new, stronger algorithm upon successful login.
+**Prevention:** Use established, strong key derivation functions like PBKDF2, Argon2, or bcrypt for hashing passwords. Avoid using un-iterated hash functions like SHA-256 or MD5 for password storage.
