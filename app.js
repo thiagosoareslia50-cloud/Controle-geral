@@ -493,75 +493,103 @@ function buildMapData(processos) {
   return _mapDataCache;
 }
 function _buildMapDataInner(processos) {
-  const dct = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (k && v) m[k] = v;
-    }
-    return m;
+  // ⚡ Bolt: Optimized map building. Instead of ~35 passes (O(M*N)) over processos to build maps,
+  // we do exactly 1 pass (O(N)), dramatically reducing CPU time for large lists.
+  const m = {
+    orgaoSecretario: {}, orgaoContrato: {}, orgaoModalidade: {},
+    fornCnpj: {}, fornObjeto: {}, fornModalidade: {}, fornContrato: {},
+    fornNf: {}, fornTipDoc: {}, fornTipNf: {}, fornPeriodo: {}, fornOrdemCompra: {},
+    fornObjetosList_raw: {}, fornContratosList_raw: {}, fornModalidadesList_raw: {},
+    contratoForn: {}, contratoOrgao: {}, contratoModal: {}, contratoObjeto: {},
+    secretarioOrgao: {}, cnpjForn: {}, modalContrato: {}, modalContratosList_raw: {},
+    objModalidade: {}, objContrato: {},
+    allSecretarios_raw: new Set(), allCnpjs_raw: new Set(), allContratos_raw: new Set(),
+    allObjsHist_raw: new Set(), allDocFiscais_raw: new Set(), allTiposNf_raw: new Set(),
+    allModalidades_raw: new Set(), allOrgaos_raw: new Set(), allFornecedores_raw: new Set(),
+    orgaoContratosList_raw: {}, orgaoModalidadesList_raw: {}
   };
-  const lst = col => {
-    const s = new Set();
-    for (const p of processos) {
-      const v = String(p[col] || "").trim();
-      if (v) s.add(v);
+
+  const addM = (obj, k, v) => {
+    if (k && v) {
+      if (!obj[k]) obj[k] = new Set();
+      obj[k].add(v);
     }
-    return [...s].sort();
   };
-  const multi = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (!k || !v) continue;
-      if (!m[k]) m[k] = new Set();
-      m[k].add(v);
-    }
-    const out = {};
-    for (const k in m) out[k] = [...m[k]].sort();
-    return out;
-  };
+
+  for (let i = 0; i < processos.length; i++) {
+    const p = processos[i];
+    const orgao = String(p["ORGÃO"] || "").trim();
+    const secretario = String(p["SECRETARIO"] || "").trim();
+    const contrato = String(p["CONTRATO"] || "").trim();
+    const modalidade = String(p["MODALIDADE"] || "").trim();
+    const forn = String(p["FORNECEDOR"] || "").trim();
+    const cnpj = String(p["CNPJ"] || "").trim();
+    const objeto = String(p["OBJETO"] || "").trim();
+    const nf = String(p["Nº"] || "").trim();
+    const tipDoc = String(p["DOCUMENTO FISCAL"] || "").trim();
+    const tipNf = String(p["TIPO"] || "").trim();
+    const periodo = String(p["PERÍODO DE REFERÊNCIA"] || "").trim();
+    const ordemC = String(p["N° ORDEM DE COMPRA"] || "").trim();
+
+    if (orgao && secretario) m.orgaoSecretario[orgao] = secretario;
+    if (orgao && contrato) m.orgaoContrato[orgao] = contrato;
+    if (orgao && modalidade) m.orgaoModalidade[orgao] = modalidade;
+    if (forn && cnpj) m.fornCnpj[forn] = cnpj;
+    if (forn && objeto) m.fornObjeto[forn] = objeto;
+    if (forn && modalidade) m.fornModalidade[forn] = modalidade;
+    if (forn && contrato) m.fornContrato[forn] = contrato;
+    if (forn && nf) m.fornNf[forn] = nf;
+    if (forn && tipDoc) m.fornTipDoc[forn] = tipDoc;
+    if (forn && tipNf) m.fornTipNf[forn] = tipNf;
+    if (forn && periodo) m.fornPeriodo[forn] = periodo;
+    if (forn && ordemC) m.fornOrdemCompra[forn] = ordemC;
+
+    if (contrato && forn) m.contratoForn[contrato] = forn;
+    if (contrato && orgao) m.contratoOrgao[contrato] = orgao;
+    if (contrato && modalidade) m.contratoModal[contrato] = modalidade;
+    if (contrato && objeto) m.contratoObjeto[contrato] = objeto;
+
+    if (secretario && orgao) m.secretarioOrgao[secretario] = orgao;
+    if (cnpj && forn) m.cnpjForn[cnpj] = forn;
+    if (modalidade && contrato) m.modalContrato[modalidade] = contrato;
+    if (objeto && modalidade) m.objModalidade[objeto] = modalidade;
+    if (objeto && contrato) m.objContrato[objeto] = contrato;
+
+    if (secretario) m.allSecretarios_raw.add(secretario);
+    if (cnpj) m.allCnpjs_raw.add(cnpj);
+    if (contrato) m.allContratos_raw.add(contrato);
+    if (objeto) m.allObjsHist_raw.add(objeto);
+    if (tipDoc) m.allDocFiscais_raw.add(tipDoc);
+    if (tipNf) m.allTiposNf_raw.add(tipNf);
+    if (modalidade) m.allModalidades_raw.add(modalidade);
+    if (orgao) m.allOrgaos_raw.add(orgao);
+    if (forn) m.allFornecedores_raw.add(forn);
+
+    addM(m.fornObjetosList_raw, forn, objeto);
+    addM(m.fornContratosList_raw, forn, contrato);
+    addM(m.fornModalidadesList_raw, forn, modalidade);
+    addM(m.modalContratosList_raw, modalidade, contrato);
+    addM(m.orgaoContratosList_raw, orgao, contrato);
+    addM(m.orgaoModalidadesList_raw, orgao, modalidade);
+  }
+
+  const fSet = s => [...s].sort();
+  const fMul = o => { const r = {}; for (const k in o) r[k] = [...o[k]].sort(); return r; };
+
   return {
-    orgaoSecretario: dct("ORGÃO", "SECRETARIO"),
-    orgaoContrato: dct("ORGÃO", "CONTRATO"),
-    orgaoModalidade: dct("ORGÃO", "MODALIDADE"),
-    fornCnpj: dct("FORNECEDOR", "CNPJ"),
-    fornObjeto: dct("FORNECEDOR", "OBJETO"),
-    fornModalidade: dct("FORNECEDOR", "MODALIDADE"),
-    fornContrato: dct("FORNECEDOR", "CONTRATO"),
-    fornNf: dct("FORNECEDOR", "Nº"),
-    fornTipDoc: dct("FORNECEDOR", "DOCUMENTO FISCAL"),
-    fornTipNf: dct("FORNECEDOR", "TIPO"),
-    fornPeriodo: dct("FORNECEDOR", "PERÍODO DE REFERÊNCIA"),
-    fornOrdemCompra: dct("FORNECEDOR", "N° ORDEM DE COMPRA"),
-    fornObjetosList: multi("FORNECEDOR", "OBJETO"),
-    fornContratosList: multi("FORNECEDOR", "CONTRATO"),
-    fornModalidadesList: multi("FORNECEDOR", "MODALIDADE"),
-    // Mapas inversos para auto-fill por contrato
-    contratoForn: dct("CONTRATO", "FORNECEDOR"),
-    contratoOrgao: dct("CONTRATO", "ORGÃO"),
-    contratoModal: dct("CONTRATO", "MODALIDADE"),
-    contratoObjeto: dct("CONTRATO", "OBJETO"),
-    // Mapa inverso: secretário → órgão
-    secretarioOrgao: dct("SECRETARIO", "ORGÃO"),
-    cnpjForn: dct("CNPJ", "FORNECEDOR"),
-    modalContrato: dct("MODALIDADE", "CONTRATO"),
-    modalContratosList: multi("MODALIDADE", "CONTRATO"),
-    objModalidade: dct("OBJETO", "MODALIDADE"),
-    objContrato: dct("OBJETO", "CONTRATO"),
-    allSecretarios: lst("SECRETARIO"),
-    allCnpjs: lst("CNPJ"),
-    allContratos: lst("CONTRATO"),
-    allObjsHist: lst("OBJETO"),
-    allDocFiscais: lst("DOCUMENTO FISCAL"),
-    allTiposNf: lst("TIPO"),
-    allModalidades: lst("MODALIDADE"),
-    allOrgaos: lst("ORGÃO"),
-    allFornecedores: lst("FORNECEDOR"),
-    orgaoContratosList: multi("ORGÃO", "CONTRATO"),
-    orgaoModalidadesList: multi("ORGÃO", "MODALIDADE")
+    orgaoSecretario: m.orgaoSecretario, orgaoContrato: m.orgaoContrato, orgaoModalidade: m.orgaoModalidade,
+    fornCnpj: m.fornCnpj, fornObjeto: m.fornObjeto, fornModalidade: m.fornModalidade, fornContrato: m.fornContrato,
+    fornNf: m.fornNf, fornTipDoc: m.fornTipDoc, fornTipNf: m.fornTipNf, fornPeriodo: m.fornPeriodo,
+    fornOrdemCompra: m.fornOrdemCompra, fornObjetosList: fMul(m.fornObjetosList_raw),
+    fornContratosList: fMul(m.fornContratosList_raw), fornModalidadesList: fMul(m.fornModalidadesList_raw),
+    contratoForn: m.contratoForn, contratoOrgao: m.contratoOrgao, contratoModal: m.contratoModal,
+    contratoObjeto: m.contratoObjeto, secretarioOrgao: m.secretarioOrgao, cnpjForn: m.cnpjForn,
+    modalContrato: m.modalContrato, modalContratosList: fMul(m.modalContratosList_raw),
+    objModalidade: m.objModalidade, objContrato: m.objContrato,
+    allSecretarios: fSet(m.allSecretarios_raw), allCnpjs: fSet(m.allCnpjs_raw), allContratos: fSet(m.allContratos_raw),
+    allObjsHist: fSet(m.allObjsHist_raw), allDocFiscais: fSet(m.allDocFiscais_raw), allTiposNf: fSet(m.allTiposNf_raw),
+    allModalidades: fSet(m.allModalidades_raw), allOrgaos: fSet(m.allOrgaos_raw), allFornecedores: fSet(m.allFornecedores_raw),
+    orgaoContratosList: fMul(m.orgaoContratosList_raw), orgaoModalidadesList: fMul(m.orgaoModalidadesList_raw)
   };
 } // end _buildMapDataInner
 
