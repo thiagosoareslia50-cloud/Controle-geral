@@ -8203,8 +8203,7 @@ function App() {
       flexDirection: "column", alignItems: "center", justifyContent: "center",
       gap: 4, boxShadow: "0 2px 8px rgba(0,0,0,.3)"
     },
-    className: "hamburger-btn",
-    style: {
+    className: "hamburger-btn", "aria-label": "Abrir menu", style: {
       position: "fixed", top: 12, left: 12, zIndex: 1000,
       background: MUN.green, border: "none", borderRadius: 8,
       width: 38, height: 38, cursor: "pointer", display: "flex",
