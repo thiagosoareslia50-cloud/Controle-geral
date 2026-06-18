@@ -1,0 +1,3 @@
+## 2024-05-24 - Optimizing _buildMapDataInner
+**Learning:** In applications where a single large dataset (`processos`) is processed to extract multiple lookup maps and lists, using multiple sequential iteration passes (e.g., repeatedly looping over the dataset for each mapping) creates an O(M * N) bottleneck where M is the number of maps and N is the dataset size.
+**Action:** Replace multiple sequential loops with a single, consolidated loop that processes all required properties simultaneously, populating objects and sets in one pass. This significantly reduces iteration overhead and JS-to-C++ boundary crossings, improving execution time.
