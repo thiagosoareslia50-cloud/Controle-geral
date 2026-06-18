@@ -1,0 +1,3 @@
+## 2024-06-18 - Missing ARIA Labels on Icon-Only Buttons
+**Learning:** Found several icon-only or visually ambiguous buttons (like hamburger menu, close buttons "X", expand/collapse arrows, and clear filters) missing `aria-label`s. This makes them inaccessible to screen readers, preventing users from understanding the button's action. Adding descriptive `aria-label`s and `title`s (for tooltips) significantly improves accessibility and UX. Also, dynamically changing `aria-expanded` and the `aria-label` depending on state (e.g. sidebarOpen) provides clear context.
+**Action:** Always ensure that any button without clear visible text (or only containing an icon/emoji like "×" or "◀") has a descriptive `aria-label`. Use dynamic `aria-label`s for toggle states.

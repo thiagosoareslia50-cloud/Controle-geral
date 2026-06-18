@@ -3136,6 +3136,8 @@ function Sidebar({
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
     title: mini ? "Expandir menu" : "Recolher menu",
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
+    "aria-expanded": !mini,
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
       border: "none", borderRadius: 6, width: 22, height: 22, cursor: "pointer",
@@ -4087,6 +4089,8 @@ function NovoProcessoPage({
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setFornHistorial(null),
+      "aria-label": "Fechar",
+      title: "Fechar",
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
   ),
@@ -4239,6 +4243,8 @@ function NovoProcessoPage({
     onClick: () => setTab(i)
   }, t))), /*#__PURE__*/React.createElement("button", {
     onClick: () => setCompact(c => !c),
+    "aria-label": compact ? "Expandir abas" : "Recolher abas",
+    title: compact ? "Expandir" : "Recolher",
     style: {
       ...BS("ghost", false, dark),
       height: 30,
@@ -4271,6 +4277,8 @@ function NovoProcessoPage({
     ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
+      "aria-label": "Cancelar",
+      title: "Cancelar",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
@@ -4460,6 +4468,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidade por fornecedor",
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
@@ -4501,6 +4510,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contrato por fornecedor",
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
@@ -8204,6 +8214,8 @@ function App() {
       gap: 4, boxShadow: "0 2px 8px rgba(0,0,0,.3)"
     },
     className: "hamburger-btn",
+    "aria-label": sidebarOpen ? "Fechar menu" : "Abrir menu",
+    "aria-expanded": sidebarOpen,
     style: {
       position: "fixed", top: 12, left: 12, zIndex: 1000,
       background: MUN.green, border: "none", borderRadius: 8,
