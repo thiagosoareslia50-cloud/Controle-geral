@@ -2576,7 +2576,9 @@ function ShortcutsModal({
       fontSize: 18,
       cursor: "pointer",
       color: "#64748b"
-    }
+    },
+    "aria-label": "Fechar atalhos",
+    title: "Fechar atalhos"
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -2826,6 +2828,8 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
+      title: ver ? "Ocultar senha" : "Mostrar senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -5866,6 +5870,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFDB\uFE0F ", filtOrg.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltOrg(""),
+                "aria-label": "Remover filtro de órgão",
+                title: "Remover filtro de órgão",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5879,6 +5885,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFE2 ", filtForn.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltForn(""),
+                "aria-label": "Remover filtro de fornecedor",
+                title: "Remover filtro de fornecedor",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5892,6 +5900,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83D\uDCC5 ", filtMes ? filtMes : filtAno,
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => { setFiltAno(""); setFiltMes(""); },
+                "aria-label": "Remover filtro de período",
+                title: "Remover filtro de período",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715"))
