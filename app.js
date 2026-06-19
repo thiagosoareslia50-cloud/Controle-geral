@@ -571,10 +571,33 @@ function _buildMapDataInner(processos) {
 const USERS_SCHEMA_V = 3;
 
 async function hashSenha(salt, senha) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(senha),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: enc.encode(salt),
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  return [...new Uint8Array(derivedBits)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+async function hashSenhaLegado(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
+
 async function loadUsers() {
   let u = await ST.get("users");
   // Recria admin se: não existe, ou schemaV desatualizado (hash de versão anterior)
@@ -598,14 +621,25 @@ async function loadUsers() {
   }
   return u;
 }
+
 async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
-}
 
-// ─── Excel ────────────────────────────────────────────────────────────────────
+  const novoHash = await hashSenha(u.salt, senha);
+  if (novoHash === u.senha) return u;
+
+  // Opportunistic upgrade for legacy hashes
+  const hashAntigo = await hashSenhaLegado(u.salt, senha);
+  if (hashAntigo === u.senha) {
+    u.senha = novoHash;
+    await ST.set("users", us);
+    return u;
+  }
+
+  return null;
+}// ─── Excel ────────────────────────────────────────────────────────────────────
 async function importarExcel(file) {
   const buf = await file.arrayBuffer();
   const wb = XLSX.read(buf, { type: "array", cellDates: true, raw: true });
