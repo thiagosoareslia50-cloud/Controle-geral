@@ -493,76 +493,45 @@ function buildMapData(processos) {
   return _mapDataCache;
 }
 function _buildMapDataInner(processos) {
-  const dct = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (k && v) m[k] = v;
-    }
-    return m;
+  const m = {
+    orgaoSecretario: {}, orgaoContrato: {}, orgaoModalidade: {}, fornCnpj: {}, fornObjeto: {},
+    fornModalidade: {}, fornContrato: {}, fornNf: {}, fornTipDoc: {}, fornTipNf: {},
+    fornPeriodo: {}, fornOrdemCompra: {}, fornObjetosList: {}, fornContratosList: {},
+    fornModalidadesList: {}, contratoForn: {}, contratoOrgao: {}, contratoModal: {},
+    contratoObjeto: {}, secretarioOrgao: {}, cnpjForn: {}, modalContrato: {},
+    modalContratosList: {}, objModalidade: {}, objContrato: {}, allSecretarios: new Set(),
+    allCnpjs: new Set(), allContratos: new Set(), allObjsHist: new Set(), allDocFiscais: new Set(),
+    allTiposNf: new Set(), allModalidades: new Set(), allOrgaos: new Set(), allFornecedores: new Set(),
+    orgaoContratosList: {}, orgaoModalidadesList: {}
   };
-  const lst = col => {
-    const s = new Set();
-    for (const p of processos) {
-      const v = String(p[col] || "").trim();
-      if (v) s.add(v);
-    }
-    return [...s].sort();
-  };
-  const multi = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (!k || !v) continue;
-      if (!m[k]) m[k] = new Set();
-      m[k].add(v);
-    }
-    const out = {};
-    for (const k in m) out[k] = [...m[k]].sort();
-    return out;
-  };
-  return {
-    orgaoSecretario: dct("ORGÃO", "SECRETARIO"),
-    orgaoContrato: dct("ORGÃO", "CONTRATO"),
-    orgaoModalidade: dct("ORGÃO", "MODALIDADE"),
-    fornCnpj: dct("FORNECEDOR", "CNPJ"),
-    fornObjeto: dct("FORNECEDOR", "OBJETO"),
-    fornModalidade: dct("FORNECEDOR", "MODALIDADE"),
-    fornContrato: dct("FORNECEDOR", "CONTRATO"),
-    fornNf: dct("FORNECEDOR", "Nº"),
-    fornTipDoc: dct("FORNECEDOR", "DOCUMENTO FISCAL"),
-    fornTipNf: dct("FORNECEDOR", "TIPO"),
-    fornPeriodo: dct("FORNECEDOR", "PERÍODO DE REFERÊNCIA"),
-    fornOrdemCompra: dct("FORNECEDOR", "N° ORDEM DE COMPRA"),
-    fornObjetosList: multi("FORNECEDOR", "OBJETO"),
-    fornContratosList: multi("FORNECEDOR", "CONTRATO"),
-    fornModalidadesList: multi("FORNECEDOR", "MODALIDADE"),
-    // Mapas inversos para auto-fill por contrato
-    contratoForn: dct("CONTRATO", "FORNECEDOR"),
-    contratoOrgao: dct("CONTRATO", "ORGÃO"),
-    contratoModal: dct("CONTRATO", "MODALIDADE"),
-    contratoObjeto: dct("CONTRATO", "OBJETO"),
-    // Mapa inverso: secretário → órgão
-    secretarioOrgao: dct("SECRETARIO", "ORGÃO"),
-    cnpjForn: dct("CNPJ", "FORNECEDOR"),
-    modalContrato: dct("MODALIDADE", "CONTRATO"),
-    modalContratosList: multi("MODALIDADE", "CONTRATO"),
-    objModalidade: dct("OBJETO", "MODALIDADE"),
-    objContrato: dct("OBJETO", "CONTRATO"),
-    allSecretarios: lst("SECRETARIO"),
-    allCnpjs: lst("CNPJ"),
-    allContratos: lst("CONTRATO"),
-    allObjsHist: lst("OBJETO"),
-    allDocFiscais: lst("DOCUMENTO FISCAL"),
-    allTiposNf: lst("TIPO"),
-    allModalidades: lst("MODALIDADE"),
-    allOrgaos: lst("ORGÃO"),
-    allFornecedores: lst("FORNECEDOR"),
-    orgaoContratosList: multi("ORGÃO", "CONTRATO"),
-    orgaoModalidadesList: multi("ORGÃO", "MODALIDADE")
-  };
+  const sD = (d, k, v) => { if (k && v) d[k] = v; };
+  const aL = (s, v) => { if (v) s.add(v); };
+  const aM = (d, k, v) => { if (k && v) { if (!d[k]) d[k] = new Set(); d[k].add(v); } };
+  for (const p of processos) {
+    const org = String(p["ORGÃO"]||"").trim(), sec = String(p["SECRETARIO"]||"").trim();
+    const con = String(p["CONTRATO"]||"").trim(), mod = String(p["MODALIDADE"]||"").trim();
+    const fornc = String(p["FORNECEDOR"]||"").trim(), cnpj = String(p["CNPJ"]||"").trim();
+    const obj = String(p["OBJETO"]||"").trim(), nf = String(p["Nº"]||"").trim();
+    const tDoc = String(p["DOCUMENTO FISCAL"]||"").trim(), tNf = String(p["TIPO"]||"").trim();
+    const per = String(p["PERÍODO DE REFERÊNCIA"]||"").trim(), ord = String(p["N° ORDEM DE COMPRA"]||"").trim();
+    sD(m.orgaoSecretario, org, sec); sD(m.orgaoContrato, org, con); sD(m.orgaoModalidade, org, mod);
+    sD(m.fornCnpj, fornc, cnpj); sD(m.fornObjeto, fornc, obj); sD(m.fornModalidade, fornc, mod);
+    sD(m.fornContrato, fornc, con); sD(m.fornNf, fornc, nf); sD(m.fornTipDoc, fornc, tDoc);
+    sD(m.fornTipNf, fornc, tNf); sD(m.fornPeriodo, fornc, per); sD(m.fornOrdemCompra, fornc, ord);
+    aM(m.fornObjetosList, fornc, obj); aM(m.fornContratosList, fornc, con); aM(m.fornModalidadesList, fornc, mod);
+    sD(m.contratoForn, con, fornc); sD(m.contratoOrgao, con, org); sD(m.contratoModal, con, mod); sD(m.contratoObjeto, con, obj);
+    sD(m.secretarioOrgao, sec, org); sD(m.cnpjForn, cnpj, fornc); sD(m.modalContrato, mod, con); aM(m.modalContratosList, mod, con);
+    sD(m.objModalidade, obj, mod); sD(m.objContrato, obj, con);
+    aL(m.allSecretarios, sec); aL(m.allCnpjs, cnpj); aL(m.allContratos, con); aL(m.allObjsHist, obj);
+    aL(m.allDocFiscais, tDoc); aL(m.allTiposNf, tNf); aL(m.allModalidades, mod); aL(m.allOrgaos, org); aL(m.allFornecedores, fornc);
+    aM(m.orgaoContratosList, org, con); aM(m.orgaoModalidadesList, org, mod);
+  }
+  const sM = d => { const o = {}; for (const k in d) o[k] = [...d[k]].sort(); return o; };
+  m.fornObjetosList = sM(m.fornObjetosList); m.fornContratosList = sM(m.fornContratosList);
+  m.fornModalidadesList = sM(m.fornModalidadesList); m.modalContratosList = sM(m.modalContratosList);
+  m.orgaoContratosList = sM(m.orgaoContratosList); m.orgaoModalidadesList = sM(m.orgaoModalidadesList);
+  ["allSecretarios", "allCnpjs", "allContratos", "allObjsHist", "allDocFiscais", "allTiposNf", "allModalidades", "allOrgaos", "allFornecedores"].forEach(k => m[k] = [...m[k]].sort());
+  return m;
 } // end _buildMapDataInner
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
