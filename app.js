@@ -570,10 +570,17 @@ function _buildMapDataInner(processos) {
 // se o código de hash mudar entre deploys, evitando login quebrado.
 const USERS_SCHEMA_V = 3;
 
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+async function hashSenha(salt, senha) {
+  const e = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey("raw", e.encode(senha), { name: "PBKDF2" }, false, ["deriveBits"]);
+  const b = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: e.encode(salt), iterations: 100000, hash: "SHA-256" }, keyMaterial, 256);
+  return "pk2$" + [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 async function loadUsers() {
   let u = await ST.get("users");
@@ -602,7 +609,16 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+
+  const isLegacy = !u.senha.startsWith("pk2$");
+  const isValid = isLegacy ? (await hashSenhaLegacy(u.salt, senha)) === u.senha : (await hashSenha(u.salt, senha)) === u.senha;
+
+  if (isValid && isLegacy) {
+    u.senha = await hashSenha(u.salt, senha);
+    await ST.set("users", us);
+  }
+
+  return isValid ? u : null;
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
