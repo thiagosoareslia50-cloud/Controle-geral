@@ -1,0 +1,4 @@
+## 2024-06-22 - Upgrade simple SHA-256 to PBKDF2
+**Vulnerability:** Passwords were being hashed with a simple, un-iterated SHA-256 hash `crypto.subtle.digest("SHA-256", ...)`.
+**Learning:** Using simple SHA-256 for password hashing is vulnerable to brute-force and dictionary attacks. This existed likely due to a desire for simplicity using the Web Crypto API, but lacked the necessary computational iterations.
+**Prevention:** Always use a modern Key Derivation Function (KDF) like PBKDF2, bcrypt, or Argon2 when hashing passwords. In browser-native contexts, `crypto.subtle.deriveBits` with `PBKDF2` and a high iteration count (e.g., 100,000) provides adequate defense against offline cracking. Opportunistic upgrade strategies can migrate legacy hashes safely on next login without invalidating sessions.
