@@ -1,0 +1,3 @@
+## 2024-05-06 - Adding ARIA labels to icon-only toggles
+**Learning:** Legacy pure JavaScript single-page applications utilizing `React.createElement` manually may lack typical transpilation and build steps (`src/` dir, `package.json`). Small UI components (like icon-only toggles without labels) must have `aria-label` and `title` attributes directly applied within the `React.createElement` object for accessibility.
+**Action:** Always search for `React.createElement("button"` when looking for buttons in legacy setups and check properties for accessible attributes, even if the code looks like a compiled output.
