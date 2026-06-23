@@ -614,9 +614,14 @@ async function importarExcel(file) {
 
   // ── Descobrir índice de cada coluna pelo cabeçalho (linha 1) ──────────────
   const colIdx = {}; // canonName → índice
+  const headerCols = []; // [Bolt Performance] Cache das colunas para evitar re-processamento por linha
   for (let c = 0; c <= range.e.c; c++) {
     const cell = ws[XLSX.utils.encode_cell({ r: 0, c })];
-    if (cell && cell.v) colIdx[canonCol(String(cell.v))] = c;
+    if (cell && cell.v) {
+      const colName = canonCol(String(cell.v));
+      colIdx[colName] = c;
+      headerCols[c] = colName;
+    }
   }
   const numDocIdx = colIdx["NÚMERO DO DOCUMENTO"];
 
@@ -643,9 +648,8 @@ async function importarExcel(file) {
     const row = {};
     let temDado = false;
     for (let c = 0; c <= range.e.c; c++) {
-      const hCell = ws[XLSX.utils.encode_cell({ r: 0, c })];
-      if (!hCell || !hCell.v) continue;
-      const colName = canonCol(String(hCell.v));
+      const colName = headerCols[c];
+      if (!colName) continue;
       const cell = ws[XLSX.utils.encode_cell({ r, c })];
       let valor = cell ? cell.v : "";
       if (valor === undefined || valor === null) valor = "";
