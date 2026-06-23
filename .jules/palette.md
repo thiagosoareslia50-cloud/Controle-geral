@@ -1,0 +1,3 @@
+## 2024-05-15 - Adding Context to Emoji-Only Action Buttons
+**Learning:** This application heavily relies on single-character emoji buttons (like 📂 and 🏢) as toggle switches for complex states (like `modMode`, `contMode`, `objMode`). Without explicit `aria-label` and `title` attributes, these controls are completely inaccessible to screen readers and offer no context on hover.
+**Action:** When working on UI components in this app, proactively audit any emoji-only or icon-only interactive elements and ensure they have both `aria-label` (for screen readers) and `title` (for visual hover tooltips) describing their function and current state.
