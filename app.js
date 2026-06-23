@@ -2571,6 +2571,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar atalhos de teclado",
+    title: "Fechar",
     style: {
       background: "transparent",
       border: "none",
@@ -4465,6 +4467,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": modMode === "forn" ? "Ver todas as modalidades" : "Filtrar modalidade por fornecedor",
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
@@ -4506,6 +4509,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": contMode === "forn" ? "Ver todos os contratos" : "Filtrar contrato por fornecedor",
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
@@ -4644,6 +4648,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    "aria-label": objMode === "historico" ? "Ver todos os objetos" : "Filtrar objeto por histórico",
+    title: objMode === "historico" ? "Ver todos os objetos" : "Filtrar objeto por histórico",
     style: {
       width: 38,
       height: 38,
@@ -4898,6 +4904,8 @@ function NovoProcessoPage({
     emoji: "\uD83D\uDDA8\uFE0F"
   }), "Imprimir"), /*#__PURE__*/React.createElement("button", {
     onClick: handleLimpar,
+    "aria-label": "Limpar formulário",
+    title: "Limpar formulário",
     style: {
       ...BS("ghost", false, dark),
       flex: "0 0 auto"
