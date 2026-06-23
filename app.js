@@ -2827,6 +2827,7 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -3140,6 +3141,7 @@ function Sidebar({
   ),
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
     title: mini ? "Expandir menu" : "Recolher menu",
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
@@ -4276,6 +4278,7 @@ function NovoProcessoPage({
     ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
+      "aria-label": "Fechar aviso",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
@@ -8948,6 +8951,7 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
             onClick:()=>delDoc(d._id),
+            "aria-label": "Excluir documento",
             style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
           },"✕")
         )
