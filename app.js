@@ -2082,6 +2082,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
@@ -4052,6 +4053,7 @@ function NovoProcessoPage({
     }, "\u2715 Cancelar Edi\xE7\xE3o"), /*#__PURE__*/React.createElement("button", {
       onClick: handleDuplicarUltimo,
       disabled: !ultimoProcesso,
+      "aria-label": "Duplicar último processo",
       style: {
         ...BS("secondary", !ultimoProcesso, dark),
         height: 34,
@@ -4466,6 +4468,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -4507,6 +4510,7 @@ function NovoProcessoPage({
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
+    "aria-label": contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
       height: 36,
@@ -4644,6 +4648,8 @@ function NovoProcessoPage({
     dark: dark
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setObjMode(m => m === "historico" ? "todos" : "historico"),
+    title: objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
+    "aria-label": objMode === "historico" ? "Ver todos" : "Filtrar por histórico",
     style: {
       width: 38,
       height: 38,
