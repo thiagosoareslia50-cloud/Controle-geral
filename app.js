@@ -2082,6 +2082,7 @@ const BS = (v = "primary", dis = false, dark = false) => {
 const BtnIco = ({
   emoji
 }) => /*#__PURE__*/React.createElement("span", {
+  "aria-hidden": "true",
   style: {
     fontSize: 14,
     marginRight: 2
