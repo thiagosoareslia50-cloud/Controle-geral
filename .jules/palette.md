@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - Adding ARIA attributes to icon-only buttons
+**Learning:** In React components like `app.js` with manually defined virtual DOM trees using `React.createElement`, directly mutating properties (e.g. adding `aria-hidden` to existing span wrappers or `aria-label` to toggle buttons) requires precise string matching when using simple node.js text replacement patches to ensure syntax validity.
+**Action:** When adding ARIA properties to transpiled or deeply nested JSX/JS objects in large files, use targeted script-based replacements (like Node's `String.replace()`) coupled with immediate verification via the `vm` module to prevent syntax regressions.
