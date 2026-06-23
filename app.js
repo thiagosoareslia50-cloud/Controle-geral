@@ -2826,7 +2826,7 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
       style: { ...IS(dark), paddingRight: 36 }
     }),
     /*#__PURE__*/React.createElement("button", {
-      onClick: () => setVer(v => !v),
+      onClick: () => setVer(v => !v), "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -3140,7 +3140,7 @@ function Sidebar({
   ),
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
-    title: mini ? "Expandir menu" : "Recolher menu",
+    title: mini ? "Expandir menu" : "Recolher menu", "aria-label": mini ? "Expandir menu" : "Recolher menu",
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
       border: "none", borderRadius: 6, width: 22, height: 22, cursor: "pointer",
@@ -4091,7 +4091,7 @@ function NovoProcessoPage({
              display:"flex", justifyContent:"space-between", alignItems:"center" }
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
-      onClick: () => setFornHistorial(null),
+      onClick: () => setFornHistorial(null), "aria-label": "Fechar histórico de fornecedor",
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
   ),
@@ -4275,7 +4275,7 @@ function NovoProcessoPage({
       /*#__PURE__*/React.createElement("span", { style: { marginLeft: 8 } }, "Valor · Nº Ordem de Compra · Data NF")
     ),
     /*#__PURE__*/React.createElement("button", {
-      onClick: () => setIsDuplicating(false),
+      onClick: () => setIsDuplicating(false), "aria-label": "Fechar aviso",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
