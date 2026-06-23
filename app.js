@@ -2571,6 +2571,7 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar atalhos",
     style: {
       background: "transparent",
       border: "none",
@@ -2827,6 +2828,7 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Ver senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -3141,6 +3143,7 @@ function Sidebar({
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
     title: mini ? "Expandir menu" : "Recolher menu",
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
       border: "none", borderRadius: 6, width: 22, height: 22, cursor: "pointer",
@@ -4092,6 +4095,7 @@ function NovoProcessoPage({
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setFornHistorial(null),
+      "aria-label": "Fechar histórico do fornecedor",
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
   ),
@@ -4276,6 +4280,7 @@ function NovoProcessoPage({
     ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
+      "aria-label": "Fechar aviso de duplicação",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
@@ -5871,6 +5876,7 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFDB\uFE0F ", filtOrg.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltOrg(""),
+                "aria-label": "Remover filtro de órgão",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5884,6 +5890,7 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFE2 ", filtForn.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltForn(""),
+                "aria-label": "Remover filtro de fornecedor",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5897,6 +5904,7 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83D\uDCC5 ", filtMes ? filtMes : filtAno,
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => { setFiltAno(""); setFiltMes(""); },
+                "aria-label": "Remover filtro de período",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715"))
@@ -8948,6 +8956,7 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
             onClick:()=>delDoc(d._id),
+            "aria-label": "Excluir documento",
             style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
           },"✕")
         )
