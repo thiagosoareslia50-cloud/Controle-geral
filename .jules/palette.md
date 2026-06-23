@@ -1,0 +1,3 @@
+## 2023-10-25 - Hiding Decorative Emojis and Labeling Icon Buttons
+**Learning:** Text nodes containing only emojis do not provide adequate context for screen readers. Using emojis natively as icons requires the emoji element to be hidden (`aria-hidden="true"`) to prevent confusing announcements, while the interactive parent element (e.g., `<button>`) must carry a descriptive `aria-label` to provide the actual action context.
+**Action:** Always add `aria-hidden="true"` to reusable icon/emoji components (`BtnIco`) and enforce explicit `aria-label` attributes on any icon-only button elements that use them or standalone emoji texts.
