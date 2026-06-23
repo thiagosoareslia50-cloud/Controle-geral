@@ -1,0 +1,3 @@
+## 2024-05-24 - Missing ARIA label on custom icon-only components
+**Learning:** In a buildless, programmatic React application without JSX, finding missing accessibility attributes like `aria-label` requires checking the explicit `React.createElement` invocations. Icon-only interactive elements (like custom hamburger menus made with `div` blocks) are especially prone to this as they lack standard `<img alt/>` or text node children.
+**Action:** When auditing UI components in programmatic React, explicitly grep for `React.createElement("button"` instances that lack `aria-label` or `title` properties in the passed props object, specifically targeting buttons containing only visual/presentational children (like nested `div`s) rather than standard text.
