@@ -1,0 +1,4 @@
+## 2025-06-21 - Fix weak password hashing with opportunistic PBKDF2 upgrade
+**Vulnerability:** Passwords were hashed using a single iteration of SHA-256 (`crypto.subtle.digest`), leaving them vulnerable to offline dictionary/rainbow table attacks if the database is exposed.
+**Learning:** The legacy hashing logic was tied directly to user authentication and creation. Attempting to force an upgrade by modifying `USERS_SCHEMA_V` would log out or invalidate existing valid accounts. A fallback authentication mechanism was required.
+**Prevention:** Always use a slow, key-stretching algorithm like PBKDF2, bcrypt, or Argon2 for passwords. When upgrading hashes, implement an opportunistic upgrade during successful legacy login verification to transparently migrate users to the secure format without friction or reset requirements.
