@@ -1026,7 +1026,9 @@ async function readSqliteDB(file) {
           historico.push(o);
         }
       }
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
     try {
       const r = db.exec("SELECT * FROM orgaos_config");
       if (r[0]) {
