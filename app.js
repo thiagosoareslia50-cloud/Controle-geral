@@ -4092,6 +4092,8 @@ function NovoProcessoPage({
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setFornHistorial(null),
+      "aria-label": "Fechar histórico de fornecedor",
+      title: "Fechar histórico de fornecedor",
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
   ),
@@ -4276,6 +4278,8 @@ function NovoProcessoPage({
     ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
+      "aria-label": "Fechar aviso de duplicação",
+      title: "Fechar aviso de duplicação",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
@@ -8948,6 +8952,8 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
             onClick:()=>delDoc(d._id),
+            "aria-label": "Excluir documento",
+            title: "Excluir documento",
             style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
           },"✕")
         )
