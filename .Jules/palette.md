@@ -1,0 +1,3 @@
+## 2024-04-11 - Adding ARIA labels to filter toggle buttons
+**Learning:** Found icon-only buttons for filtering modalities, contracts, and objects that only used text nodes containing emojis (like "📂" or "🏢") and lacked `aria-label` tags. While one had a basic `title`, they didn't provide enough context for screen readers to understand their function. Emojis alone are poorly interpreted by screen readers.
+**Action:** Always ensure icon-only or emoji-only buttons have explicit, descriptive `aria-label` attributes to clarify their action, especially when their state toggles dynamically (e.g. "Ver todos os objetos" vs "Filtrar por histórico do fornecedor").
