@@ -570,10 +570,17 @@ function _buildMapDataInner(processos) {
 // se o código de hash mudar entre deploys, evitando login quebrado.
 const USERS_SCHEMA_V = 3;
 
-async function hashSenha(salt, senha) {
+async function hashSenhaV1(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+async function hashSenha(salt, senha) {
+  // 🛡️ Sentinel: Upgrade to PBKDF2 for stronger password hashing
+  const e = new TextEncoder();
+  const k = await crypto.subtle.importKey("raw", e.encode(senha), "PBKDF2", false, ["deriveBits"]);
+  const b = await crypto.subtle.deriveBits({name: "PBKDF2", salt: e.encode(salt), iterations: 100000, hash: "SHA-256"}, k, 256);
+  return "v2$" + [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 async function loadUsers() {
   let u = await ST.get("users");
@@ -602,7 +609,22 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+
+  // 🛡️ Sentinel: Opportunistically upgrade old SHA-256 hashes to PBKDF2
+  const isV2 = u.senha.startsWith("v2$");
+  let valid = false;
+  if (isV2) {
+    valid = (await hashSenha(u.salt, senha)) === u.senha;
+  } else {
+    valid = (await hashSenhaV1(u.salt, senha)) === u.senha;
+    if (valid) {
+      const novoSalt = crypto.randomUUID().replace(/-/g, "").slice(0, 32);
+      u.salt = novoSalt;
+      u.senha = await hashSenha(novoSalt, senha);
+      await ST.set("users", us);
+    }
+  }
+  return valid ? u : null;
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
