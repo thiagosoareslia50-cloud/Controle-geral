@@ -1,0 +1,3 @@
+## 2024-05-17 - Add ARIA labels and title attributes to icon-only buttons
+**Learning:** Icon-only buttons or buttons consisting only of emojis lack text descriptions, making them inaccessible to screen readers and confusing for users without tooltips. In this app, many icon buttons lack `aria-label`s, but also text inside custom `BtnIco` wrapper components are not hidden from screen readers.
+**Action:** When adding or fixing icon-only buttons, add a descriptive `aria-label` for screen reader accessibility and a `title` attribute for visual tooltips. Ensure `BtnIco` decorative emojis are `aria-hidden="true"`.
