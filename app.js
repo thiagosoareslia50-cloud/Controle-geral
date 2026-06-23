@@ -570,11 +570,29 @@ function _buildMapDataInner(processos) {
 // se o código de hash mudar entre deploys, evitando login quebrado.
 const USERS_SCHEMA_V = 3;
 
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
+
+async function hashSenha(salt, senha) {
+  const e = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    e.encode(senha),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+  const b = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", salt: e.encode(salt), iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
+    256
+  );
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
 async function loadUsers() {
   let u = await ST.get("users");
   // Recria admin se: não existe, ou schemaV desatualizado (hash de versão anterior)
@@ -602,8 +620,18 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+  const h = await hashSenha(u.salt, senha);
+  if (h === u.senha) return u;
+  const hl = await hashSenhaLegacy(u.salt, senha);
+  if (hl === u.senha) {
+    u.senha = h; // Opportunistic upgrade
+    us[login] = u;
+    await ST.set("users", us);
+    return u;
+  }
+  return null;
 }
+
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
 async function importarExcel(file) {
