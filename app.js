@@ -637,15 +637,23 @@ async function importarExcel(file) {
     }
   }
 
+  // [Bolt Performance] Pre-cache column headers to remove redundant encoding and map lookups
+  const colNames = [];
+  for (let c = 0; c <= range.e.c; c++) {
+    const hCell = ws[XLSX.utils.encode_cell({ r: 0, c })];
+    if (hCell && hCell.v) {
+      colNames[c] = canonCol(String(hCell.v));
+    }
+  }
+
   // ── Ler todas as linhas de dados ──────────────────────────────────────────
   const rows = [];
   for (let r = 1; r <= range.e.r; r++) {
     const row = {};
     let temDado = false;
     for (let c = 0; c <= range.e.c; c++) {
-      const hCell = ws[XLSX.utils.encode_cell({ r: 0, c })];
-      if (!hCell || !hCell.v) continue;
-      const colName = canonCol(String(hCell.v));
+      const colName = colNames[c];
+      if (!colName) continue;
       const cell = ws[XLSX.utils.encode_cell({ r, c })];
       let valor = cell ? cell.v : "";
       if (valor === undefined || valor === null) valor = "";
