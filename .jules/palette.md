@@ -1,0 +1,3 @@
+## 2024-05-25 - Decorational Icon Excluded from Screen Readers
+**Learning:** In the `BtnIco` component (used to render emoji icons inside buttons and across the UI), the emoji serves mostly as a visual decoration and often lacked an `aria-hidden` attribute. Emojis without screen-reader accessibility can disrupt screen reader users by speaking unnecessary information instead of relying on the button's explicit label or aria-label.
+**Action:** Always ensure that decorative icons, emojis, or inline SVGs like those provided by `BtnIco` are decorated with `aria-hidden="true"` so screen readers ignore them, and always rely on explicit descriptive text (`aria-label` or inner text) at the parent interactive element level.
