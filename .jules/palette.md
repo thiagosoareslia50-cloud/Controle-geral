@@ -1,0 +1,3 @@
+## 2024-05-07 - Missing Accessibility on Icon-Only Filter Toggles
+**Learning:** In this application's custom UI, icon-only buttons that dynamically toggle states (like `modMode`, `contMode`, `objMode`) often lack proper `aria-label` attributes to communicate their changing purpose to screen readers. Some, like `objMode`, even lack `title` tooltips, making them completely opaque to sighted users as well. The icon content alone (e.g., 📂 vs 🏢) is not sufficiently descriptive.
+**Action:** When working on similar toggle buttons or custom UI controls in `app.js`, always verify that both `title` (for tooltips) and `aria-label` (for screen readers) are present and dynamically update to reflect the button's *current action or state*, identical to how the icon updates.
