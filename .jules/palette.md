@@ -1,0 +1,3 @@
+## 2024-05-31 - Decorator Emojis and Icon Buttons
+**Learning:** Screen readers announce text emojis natively which causes noise and confusion when components like `BtnIco` are nested inside other elements like buttons that already have their own text content or functionality. Also, Unicode string literals like `\u2715` acting as icon-only buttons need explicit aria-labels and titles.
+**Action:** Always add `aria-hidden="true"` to generic decorative emoji wrappers like `BtnIco` to prevent redundant or noisy screen reader announcements. Always add `aria-label` and `title` to icon-only interactive elements.
