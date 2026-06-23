@@ -2571,6 +2571,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar",
+    title: "Fechar",
     style: {
       background: "transparent",
       border: "none",
