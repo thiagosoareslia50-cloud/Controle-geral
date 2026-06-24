@@ -570,10 +570,32 @@ function _buildMapDataInner(processos) {
 // se o código de hash mudar entre deploys, evitando login quebrado.
 const USERS_SCHEMA_V = 3;
 
-async function hashSenha(salt, senha) {
+async function hashSenhaLegacy(salt, senha) {
   const e = new TextEncoder(),
     b = await crypto.subtle.digest("SHA-256", e.encode(salt + senha));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+async function hashSenha(salt, senha) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(senha),
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  const pbkdf2Buf = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: enc.encode(salt),
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  return [...new Uint8Array(pbkdf2Buf)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 async function loadUsers() {
   let u = await ST.get("users");
@@ -602,7 +624,20 @@ async function checkLogin(login, senha) {
   const us = await loadUsers(),
     u = us[login];
   if (!u || !u.ativo) return null;
-  return (await hashSenha(u.salt, senha)) === u.senha ? u : null;
+
+  if ((await hashSenha(u.salt, senha)) === u.senha) {
+    return u;
+  }
+
+  // Backward compatibility: check if user is using old SHA-256 hash
+  // and opportunistically upgrade their password hash to PBKDF2
+  if ((await hashSenhaLegacy(u.salt, senha)) === u.senha) {
+    u.senha = await hashSenha(u.salt, senha);
+    await ST.set("users", us); // Persist upgraded hash
+    return u;
+  }
+
+  return null;
 }
 
 // ─── Excel ────────────────────────────────────────────────────────────────────
