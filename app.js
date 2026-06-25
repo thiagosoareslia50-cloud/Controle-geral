@@ -2570,6 +2570,7 @@ function ShortcutsModal({
       color: tc
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Fechar",
     onClick: onClose,
     style: {
       background: "transparent",
@@ -4091,6 +4092,7 @@ function NovoProcessoPage({
              display:"flex", justifyContent:"space-between", alignItems:"center" }
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Fechar aviso de fornecedor",
       onClick: () => setFornHistorial(null),
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
@@ -4275,6 +4277,7 @@ function NovoProcessoPage({
       /*#__PURE__*/React.createElement("span", { style: { marginLeft: 8 } }, "Valor · Nº Ordem de Compra · Data NF")
     ),
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Fechar aviso",
       onClick: () => setIsDuplicating(false),
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
