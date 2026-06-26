@@ -4277,7 +4277,9 @@ function NovoProcessoPage({
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
       style: { marginLeft: "auto", background: "transparent", border: "none",
-               cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
+               cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 },
+      "aria-label": "Fechar aviso",
+      title: "Fechar aviso"
     }, "✕")
   ),
   /*#__PURE__*/React.createElement(SH, {
@@ -5053,7 +5055,9 @@ function BuscarPage({
     (filtTipo || filtDec || filtAno) && /*#__PURE__*/React.createElement("button", {
       onClick: () => { setFiltTipo(""); setFiltDec(""); setFiltAno(""); },
       style: { fontSize: 11, padding: "6px 12px", background: "#fee2e2",
-        border: "1px solid #fecaca", borderRadius: 7, color: "#dc2626", cursor: "pointer", whiteSpace: "nowrap" }
+        border: "1px solid #fecaca", borderRadius: 7, color: "#dc2626", cursor: "pointer", whiteSpace: "nowrap" },
+      "aria-label": "Limpar filtros",
+      title: "Limpar filtros"
     }, "✕ Limpar filtros"),
     /*#__PURE__*/React.createElement("span", { style: { fontSize: 11, color: "#94a3b8", marginLeft: "auto" } },
       filtered.length, " resultado(s)")
@@ -8948,7 +8952,9 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
             onClick:()=>delDoc(d._id),
-            style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
+            style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700},
+            "aria-label": "Remover documento",
+            title: "Remover"
           },"✕")
         )
       ),
