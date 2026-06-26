@@ -493,75 +493,46 @@ function buildMapData(processos) {
   return _mapDataCache;
 }
 function _buildMapDataInner(processos) {
-  const dct = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (k && v) m[k] = v;
-    }
-    return m;
+  const o = {
+    orgaoSecretario: {}, orgaoContrato: {}, orgaoModalidade: {}, fornCnpj: {}, fornObjeto: {},
+    fornModalidade: {}, fornContrato: {}, fornNf: {}, fornTipDoc: {}, fornTipNf: {}, fornPeriodo: {},
+    fornOrdemCompra: {}, fornObjetosList: {}, fornContratosList: {}, fornModalidadesList: {},
+    contratoForn: {}, contratoOrgao: {}, contratoModal: {}, contratoObjeto: {}, secretarioOrgao: {},
+    cnpjForn: {}, modalContrato: {}, modalContratosList: {}, objModalidade: {}, objContrato: {},
+    allSecretarios: new Set(), allCnpjs: new Set(), allContratos: new Set(), allObjsHist: new Set(),
+    allDocFiscais: new Set(), allTiposNf: new Set(), allModalidades: new Set(), allOrgaos: new Set(),
+    allFornecedores: new Set(), orgaoContratosList: {}, orgaoModalidadesList: {}
   };
-  const lst = col => {
-    const s = new Set();
-    for (const p of processos) {
-      const v = String(p[col] || "").trim();
-      if (v) s.add(v);
-    }
-    return [...s].sort();
-  };
-  const multi = (kC, vC) => {
-    const m = {};
-    for (const p of processos) {
-      const k = String(p[kC] || "").trim(),
-        v = String(p[vC] || "").trim();
-      if (!k || !v) continue;
-      if (!m[k]) m[k] = new Set();
-      m[k].add(v);
-    }
-    const out = {};
-    for (const k in m) out[k] = [...m[k]].sort();
-    return out;
-  };
-  return {
-    orgaoSecretario: dct("ORGÃO", "SECRETARIO"),
-    orgaoContrato: dct("ORGÃO", "CONTRATO"),
-    orgaoModalidade: dct("ORGÃO", "MODALIDADE"),
-    fornCnpj: dct("FORNECEDOR", "CNPJ"),
-    fornObjeto: dct("FORNECEDOR", "OBJETO"),
-    fornModalidade: dct("FORNECEDOR", "MODALIDADE"),
-    fornContrato: dct("FORNECEDOR", "CONTRATO"),
-    fornNf: dct("FORNECEDOR", "Nº"),
-    fornTipDoc: dct("FORNECEDOR", "DOCUMENTO FISCAL"),
-    fornTipNf: dct("FORNECEDOR", "TIPO"),
-    fornPeriodo: dct("FORNECEDOR", "PERÍODO DE REFERÊNCIA"),
-    fornOrdemCompra: dct("FORNECEDOR", "N° ORDEM DE COMPRA"),
-    fornObjetosList: multi("FORNECEDOR", "OBJETO"),
-    fornContratosList: multi("FORNECEDOR", "CONTRATO"),
-    fornModalidadesList: multi("FORNECEDOR", "MODALIDADE"),
-    // Mapas inversos para auto-fill por contrato
-    contratoForn: dct("CONTRATO", "FORNECEDOR"),
-    contratoOrgao: dct("CONTRATO", "ORGÃO"),
-    contratoModal: dct("CONTRATO", "MODALIDADE"),
-    contratoObjeto: dct("CONTRATO", "OBJETO"),
-    // Mapa inverso: secretário → órgão
-    secretarioOrgao: dct("SECRETARIO", "ORGÃO"),
-    cnpjForn: dct("CNPJ", "FORNECEDOR"),
-    modalContrato: dct("MODALIDADE", "CONTRATO"),
-    modalContratosList: multi("MODALIDADE", "CONTRATO"),
-    objModalidade: dct("OBJETO", "MODALIDADE"),
-    objContrato: dct("OBJETO", "CONTRATO"),
-    allSecretarios: lst("SECRETARIO"),
-    allCnpjs: lst("CNPJ"),
-    allContratos: lst("CONTRATO"),
-    allObjsHist: lst("OBJETO"),
-    allDocFiscais: lst("DOCUMENTO FISCAL"),
-    allTiposNf: lst("TIPO"),
-    allModalidades: lst("MODALIDADE"),
-    allOrgaos: lst("ORGÃO"),
-    allFornecedores: lst("FORNECEDOR"),
-    orgaoContratosList: multi("ORGÃO", "CONTRATO"),
-    orgaoModalidadesList: multi("ORGÃO", "MODALIDADE")
+  const set = (m, k, v) => { if (k && v) m[k] = v; };
+  const add = (s, v) => { if (v) s.add(v); };
+  const push = (m, k, v) => { if (k && v) { (m[k] || (m[k] = new Set())).add(v); } };
+  for (let i = 0; i < processos.length; i++) {
+    const p = processos[i];
+    const org = String(p["ORGÃO"]||"").trim(), sec = String(p["SECRETARIO"]||"").trim(),
+          con = String(p["CONTRATO"]||"").trim(), mod = String(p["MODALIDADE"]||"").trim(),
+          forn = String(p["FORNECEDOR"]||"").trim(), cnpj = String(p["CNPJ"]||"").trim(),
+          obj = String(p["OBJETO"]||"").trim(), nf = String(p["Nº"]||"").trim(),
+          tdoc = String(p["DOCUMENTO FISCAL"]||"").trim(), tnf = String(p["TIPO"]||"").trim(),
+          per = String(p["PERÍODO DE REFERÊNCIA"]||"").trim(), oc = String(p["N° ORDEM DE COMPRA"]||"").trim();
+    set(o.orgaoSecretario, org, sec); set(o.orgaoContrato, org, con); set(o.orgaoModalidade, org, mod);
+    set(o.fornCnpj, forn, cnpj); set(o.fornObjeto, forn, obj); set(o.fornModalidade, forn, mod);
+    set(o.fornContrato, forn, con); set(o.fornNf, forn, nf); set(o.fornTipDoc, forn, tdoc);
+    set(o.fornTipNf, forn, tnf); set(o.fornPeriodo, forn, per); set(o.fornOrdemCompra, forn, oc);
+    push(o.fornObjetosList, forn, obj); push(o.fornContratosList, forn, con); push(o.fornModalidadesList, forn, mod);
+    set(o.contratoForn, con, forn); set(o.contratoOrgao, con, org); set(o.contratoModal, con, mod); set(o.contratoObjeto, con, obj);
+    set(o.secretarioOrgao, sec, org); set(o.cnpjForn, cnpj, forn); set(o.modalContrato, mod, con); push(o.modalContratosList, mod, con);
+    set(o.objModalidade, obj, mod); set(o.objContrato, obj, con);
+    add(o.allSecretarios, sec); add(o.allCnpjs, cnpj); add(o.allContratos, con); add(o.allObjsHist, obj);
+    add(o.allDocFiscais, tdoc); add(o.allTiposNf, tnf); add(o.allModalidades, mod); add(o.allOrgaos, org);
+    add(o.allFornecedores, forn); push(o.orgaoContratosList, org, con); push(o.orgaoModalidadesList, org, mod);
+  }
+  const toArr = s => [...s].sort();
+  const mapArr = m => { const r = {}; for(const k in m) r[k] = toArr(m[k]); return r; };
+  return { ...o, allSecretarios: toArr(o.allSecretarios), allCnpjs: toArr(o.allCnpjs), allContratos: toArr(o.allContratos),
+    allObjsHist: toArr(o.allObjsHist), allDocFiscais: toArr(o.allDocFiscais), allTiposNf: toArr(o.allTiposNf),
+    allModalidades: toArr(o.allModalidades), allOrgaos: toArr(o.allOrgaos), allFornecedores: toArr(o.allFornecedores),
+    fornObjetosList: mapArr(o.fornObjetosList), fornContratosList: mapArr(o.fornContratosList), fornModalidadesList: mapArr(o.fornModalidadesList),
+    modalContratosList: mapArr(o.modalContratosList), orgaoContratosList: mapArr(o.orgaoContratosList), orgaoModalidadesList: mapArr(o.orgaoModalidadesList)
   };
 } // end _buildMapDataInner
 
