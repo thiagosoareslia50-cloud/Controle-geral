@@ -197,11 +197,23 @@ const ST = {
     }
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("cgel_" + prefix)) {
-          const raw = localStorage.getItem(k);
-          if (raw) { try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {} }
+      const keys = Object.keys(localStorage);
+      if (keys.length === 0 && localStorage.length > 0) {
+        // Fallback para ambientes onde localStorage.keys não é enumerável
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("cgel_" + prefix)) {
+            const raw = localStorage.getItem(k);
+            if (raw) { try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {} }
+          }
+        }
+      } else {
+        // O(N) eficiente
+        for (const k of keys) {
+          if (k && k.startsWith("cgel_" + prefix)) {
+            const raw = localStorage.getItem(k);
+            if (raw) { try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {} }
+          }
         }
       }
       if (results.length) return results;
