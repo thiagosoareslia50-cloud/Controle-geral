@@ -2827,6 +2827,8 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Ver senha",
+      title: ver ? "Ocultar senha" : "Ver senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -4276,6 +4278,8 @@ function NovoProcessoPage({
     ),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
+      "aria-label": "Fechar aviso",
+      title: "Fechar aviso",
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
     }, "✕")
@@ -5871,6 +5875,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFDB\uFE0F ", filtOrg.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltOrg(""),
+                "aria-label": "Remover filtro",
+                title: "Remover filtro",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5884,6 +5890,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83C\uDFE2 ", filtForn.slice(0, 28),
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltForn(""),
+                "aria-label": "Remover filtro",
+                title: "Remover filtro",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715")),
@@ -5897,6 +5905,8 @@ const BarChartCSS = ({ data, onHover }) => {
             }, "\uD83D\uDCC5 ", filtMes ? filtMes : filtAno,
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => { setFiltAno(""); setFiltMes(""); },
+                "aria-label": "Remover filtro",
+                title: "Remover filtro",
                 style: { background: "none", border: "none", cursor: "pointer",
                   color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
               }, "\u2715"))
