@@ -1206,13 +1206,22 @@ async function gerarRelatorioPDF(processos, mesAno, appConfig) {
 
     // ── Sumário (Ateste/Parecer style) ──
     doc.setFontSize(10);
-    [
-      ["Total de processos:", filtrados.length.toString()],
-      ["Deferidos:", filtrados.filter(p=>p["_decisao"]==="deferir").length.toString()],
-      ["Indeferidos:", filtrados.filter(p=>p["_decisao"]==="indeferir").length.toString()],
-      ["Pendentes:", filtrados.filter(p=>!p["_decisao"]).length.toString()],
-      ["Valor total:", fmtBRL(totalGeral)]
-    ].forEach(([l,v], ri) => {
+    (() => {
+      let def = 0, indef = 0, pend = 0;
+      for (let i = 0; i < filtrados.length; i++) {
+        const dec = filtrados[i]["_decisao"];
+        if (dec === "deferir") def++;
+        else if (dec === "indeferir") indef++;
+        else if (!dec) pend++;
+      }
+      return [
+        ["Total de processos:", filtrados.length.toString()],
+        ["Deferidos:", def.toString()],
+        ["Indeferidos:", indef.toString()],
+        ["Pendentes:", pend.toString()],
+        ["Valor total:", fmtBRL(totalGeral)]
+      ];
+    })().forEach(([l,v], ri) => {
       // Alinha no layout com caixa de fundo suave alternada
       const rH = 7;
       doc.setFillColor(ri % 2 === 0 ? 235 : 245, ri % 2 === 0 ? 248 : 252, ri % 2 === 0 ? 235 : 245);
@@ -6068,13 +6077,16 @@ function HistoricoPage({
   useEffect(() => { setPagAtual(0); }, [q, filtDec]);
   const totalPags = Math.ceil(filtered.length / PER_PAGE);
   const exibidos = useMemo(() => filtered.slice(pagAtual * PER_PAGE, (pagAtual + 1) * PER_PAGE), [filtered, pagAtual]);
-  const def = useMemo(() => historico.filter(h => {
-    const d = String(h["Decisão"] || "");
-    return d.includes("DEFERIDO") && !d.includes("INDE");
-  }).length, [historico]);
-  const indef = useMemo(() => historico.filter(h =>
-    String(h["Decisão"] || "").includes("INDE")
-  ).length, [historico]);
+  const { def, indef } = useMemo(() => {
+    let defCount = 0;
+    let indefCount = 0;
+    for (let i = 0; i < historico.length; i++) {
+      const d = String(historico[i]["Decisão"] || "");
+      if (d.includes("DEFERIDO") && !d.includes("INDE")) defCount++;
+      else if (d.includes("INDE")) indefCount++;
+    }
+    return { def: defCount, indef: indefCount };
+  }, [historico]);
   const handlePDF = async (h, idx) => {
     if (lPDF !== null) return;
     setLPDF(idx);
@@ -8074,7 +8086,11 @@ function App() {
     let h = combined0.historico || [];
 
     // --- AUDITORIA DE BURACOS (Ex: se falta o 2775) ---
-    const numsPresentes = new Set(p.map(x => parseInt(String(x["NÚMERO DO DOCUMENTO"] || "0"), 10)).filter(n => n > 0));
+    const numsPresentes = new Set();
+    for (let i = 0; i < p.length; i++) {
+      const n = parseInt(String(p[i]["NÚMERO DO DOCUMENTO"] || "0"), 10);
+      if (n > 0) numsPresentes.add(n);
+    }
     if (numsPresentes.size > 0) {
       const max = Math.max(...numsPresentes);
       const min = Math.max(1, max - 100); // audita os últimos 100
@@ -8092,8 +8108,16 @@ function App() {
       }
     }
 
-    const procFns = p.filter(proc => String(proc["NÚMERO DO DOCUMENTO"] || "").trim()).map(proc => () => ST.set(`proc_${String(proc["NÚMERO DO DOCUMENTO"]).trim()}`, proc));
-    const histFns = h.filter(hist => String(hist["Processo"] || hist["NÚMERO DO DOCUMENTO"] || "").trim()).map(hist => () => ST.set(`hist_${String(hist["Processo"] || hist["NÚMERO DO DOCUMENTO"]).trim()}`, hist));
+    const procFns = p.reduce((acc, proc) => {
+      const doc = String(proc["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (doc) acc.push(() => ST.set(`proc_${doc}`, proc));
+      return acc;
+    }, []);
+    const histFns = h.reduce((acc, hist) => {
+      const doc = String(hist["Processo"] || hist["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (doc) acc.push(() => ST.set(`hist_${doc}`, hist));
+      return acc;
+    }, []);
     await runBatch(procFns); await runBatch(histFns);
     if (o) await ST.set("orgaos_config", o);
     
@@ -8122,9 +8146,11 @@ function App() {
         await Promise.all(fns.slice(i, i + batchSize).map(f => f()));
       }
     };
-    const procFns = merged
-      .filter(proc => String(proc["NÚMERO DO DOCUMENTO"] || "").trim())
-      .map(proc => () => ST.set(`proc_${String(proc["NÚMERO DO DOCUMENTO"]).trim()}`, proc));
+    const procFns = merged.reduce((acc, proc) => {
+      const doc = String(proc["NÚMERO DO DOCUMENTO"] || "").trim();
+      if (doc) acc.push(() => ST.set(`proc_${doc}`, proc));
+      return acc;
+    }, []);
     runBatch(procFns).catch(() => {}); // fire-and-forget — não bloqueia a UI
 
     // [FIX-SYNC11] Notifica outros clientes que planilha foi importada
