@@ -2571,6 +2571,8 @@ function ShortcutsModal({
     }
   }, "\u2328\uFE0F Atalhos de Teclado"), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
+    "aria-label": "Fechar atalhos",
+    title: "Fechar atalhos",
     style: {
       background: "transparent",
       border: "none",
@@ -2827,6 +2829,8 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
+      title: ver ? "Ocultar senha" : "Mostrar senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -3140,6 +3144,7 @@ function Sidebar({
   ),
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
     title: mini ? "Expandir menu" : "Recolher menu",
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
@@ -8212,6 +8217,8 @@ function App() {
       gap: 4, boxShadow: "0 2px 8px rgba(0,0,0,.3)"
     },
     className: "hamburger-btn",
+    "aria-label": sidebarOpen ? "Fechar menu" : "Abrir menu",
+    title: sidebarOpen ? "Fechar menu" : "Abrir menu",
     style: {
       position: "fixed", top: 12, left: 12, zIndex: 1000,
       background: MUN.green, border: "none", borderRadius: 8,
