@@ -2577,7 +2577,9 @@ function ShortcutsModal({
       fontSize: 18,
       cursor: "pointer",
       color: "#64748b"
-    }
+    },
+    "aria-label": "Fechar atalhos de teclado",
+    "title": "Fechar atalhos de teclado"
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -2830,7 +2832,9 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
-      }
+      },
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
+      "title": ver ? "Ocultar senha" : "Mostrar senha"
     }, ver ? "🙈" : "👁️")
   ),
   /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 10, marginTop: 4 } },
@@ -4277,7 +4281,9 @@ function NovoProcessoPage({
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setIsDuplicating(false),
       style: { marginLeft: "auto", background: "transparent", border: "none",
-               cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
+               cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 },
+      "aria-label": "Fechar aviso de duplicação",
+      "title": "Fechar aviso de duplicação"
     }, "✕")
   ),
   /*#__PURE__*/React.createElement(SH, {
@@ -5872,7 +5878,9 @@ const BarChartCSS = ({ data, onHover }) => {
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltOrg(""),
                 style: { background: "none", border: "none", cursor: "pointer",
-                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
+                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 },
+                "aria-label": "Remover filtro de órgão",
+                "title": "Remover filtro de órgão"
               }, "\u2715")),
             filtForn && /*#__PURE__*/React.createElement("span", {
               key: "forn", style: {
@@ -5885,7 +5893,9 @@ const BarChartCSS = ({ data, onHover }) => {
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => setFiltForn(""),
                 style: { background: "none", border: "none", cursor: "pointer",
-                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
+                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 },
+                "aria-label": "Remover filtro de fornecedor",
+                "title": "Remover filtro de fornecedor"
               }, "\u2715")),
             (filtAno || filtMes) && /*#__PURE__*/React.createElement("span", {
               key: "periodo", style: {
@@ -5898,7 +5908,9 @@ const BarChartCSS = ({ data, onHover }) => {
               /*#__PURE__*/React.createElement("button", {
                 onClick: () => { setFiltAno(""); setFiltMes(""); },
                 style: { background: "none", border: "none", cursor: "pointer",
-                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 }
+                  color: "inherit", fontWeight: 700, fontSize: 13, lineHeight: 1, padding: 0 },
+                "aria-label": "Remover filtro de período",
+                "title": "Remover filtro de período"
               }, "\u2715"))
           ),
           // Botão limpar total
@@ -8948,7 +8960,9 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
             onClick:()=>delDoc(d._id),
-            style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
+            style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700},
+            "aria-label": "Remover documento",
+            "title": "Remover documento"
           },"✕")
         )
       ),
