@@ -2,11 +2,12 @@
 // [S-1] Credenciais via window.ENV (injetado pelo Vercel via vercel.json)
 // Fallback permite desenvolvimento local sem .env
 const _env = window.ENV || {};
-const SUPABASE_URL = _env.SUPABASE_URL || "https://mgstvnozvmyptxxnulmz.supabase.co";
-const SUPABASE_ANON_KEY = _env.SUPABASE_ANON_KEY || "sb_publishable_MvSxZEfxJrrmTXpPday22Q_yV7Zx3Xy";
+// [SECURITY] Removed hardcoded API keys to prevent accidental exposure of secrets
+const SUPABASE_URL = _env.SUPABASE_URL || "";
+const SUPABASE_ANON_KEY = _env.SUPABASE_ANON_KEY || "";
 const APP_VERSION = _env.APP_VERSION || "5.1.5";
 
-const _sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const _sb = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // [P-1] AbortController wrapper com timeout configurable (ms)
 const DEFAULT_TIMEOUT = 8000;
