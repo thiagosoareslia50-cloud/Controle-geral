@@ -197,8 +197,18 @@ const ST = {
     }
     try {
       const results = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
+      // ⚡ Bolt: Optimize localStorage iteration by avoiding repeated localStorage.key() calls
+      // Iterating via localStorage.key(i) can be O(N^2) due to cross-boundary lookup overhead.
+      // Fetching all keys at once via Object.keys() reduces complexity to O(N).
+      const keys = Object.keys(localStorage);
+      // Fallback for environments where LocalStorage keys might not be enumerable
+      if (keys.length === 0 && localStorage.length > 0) {
+        for (let j = 0; j < localStorage.length; j++) {
+          keys.push(localStorage.key(j));
+        }
+      }
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
         if (k && k.startsWith("cgel_" + prefix)) {
           const raw = localStorage.getItem(k);
           if (raw) { try { results.push({ key: k.slice(5), value: JSON.parse(raw) }); } catch {} }
