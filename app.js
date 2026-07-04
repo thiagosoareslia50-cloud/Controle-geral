@@ -2826,6 +2826,7 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
       style: { ...IS(dark), paddingRight: 36 }
     }),
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
       onClick: () => setVer(v => !v),
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
@@ -4275,6 +4276,7 @@ function NovoProcessoPage({
       /*#__PURE__*/React.createElement("span", { style: { marginLeft: 8 } }, "Valor · Nº Ordem de Compra · Data NF")
     ),
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Fechar aviso",
       onClick: () => setIsDuplicating(false),
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
@@ -8947,6 +8949,7 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
             )
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
+            "aria-label": "Excluir documento",
             onClick:()=>delDoc(d._id),
             style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
           },"✕")
