@@ -5330,80 +5330,79 @@ function DashboardPage({
     return true;
   }), [todos, filtOrg, filtAno, filtMes, filtForn])
 
-  const filteredOrgsCount = useMemo(() => {
-    const s = new Set();
+  const {
+    filteredOrgsCount,
+    filteredFornsCount,
+    porMes,
+    totalGeral,
+    topOrg
+  } = useMemo(() => {
+    const orgs = new Set();
+    const forns = new Set();
+    const mesMap = {};
+    const mesVal = {};
+    const topOrgMap = {};
+    const topOrgVal = {};
+    let total = 0;
+
     filtered.forEach(p => {
+      // Orgs
       const o = String(p["ORGÃO"] || "").trim();
-      if (o) s.add(o);
-    });
-    return s.size;
-  }, [filtered]);
+      if (o) orgs.add(o);
 
-  const filteredFornsCount = useMemo(() => {
-    const s = new Set();
-    filtered.forEach(p => {
+      // Forns
       const f = String(p["FORNECEDOR"] || "").trim();
-      if (f) s.add(f);
-    });
-    return s.size;
-  }, [filtered]);
+      if (f) forns.add(f);
 
-  // Processos por mês (últimos 12)
-  const porMes = useMemo(() => {
-    const m = {};
-    const val = {};
-    filtered.forEach(p => {
+      // Por Mes
       let raw = p["DATA"] || p["Data"];
-      if (!raw) return;
       let chave = "";
-      
-      if (raw instanceof Date) {
-        chave = `${raw.getFullYear()}-${String(raw.getMonth()+1).padStart(2,"0")}`;
-      } else {
-        raw = String(raw).trim();
-        if (/^\d{2}\/\d{2}\/\d{4}/.test(raw)) {
-          chave = raw.slice(6, 10) + "-" + raw.slice(3, 5);
-        } else if (/^\d{4}-\d{2}/.test(raw)) {
-          chave = raw.slice(0, 7);
-        } else if (raw.includes(" de ")) {
-          const pTs = raw.split(" de ");
-          if (pTs.length === 3) {
-            const mE = pTs[1].toUpperCase();
-            const mm = ["","JANEIRO","FEVEREIRO","MAR\xC7O","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"].indexOf(mE);
-            if (mm > 0) chave = `${pTs[2]}-${String(mm).padStart(2,"0")}`;
+      if (raw) {
+        if (raw instanceof Date) {
+          chave = `${raw.getFullYear()}-${String(raw.getMonth()+1).padStart(2,"0")}`;
+        } else {
+          raw = String(raw).trim();
+          if (/^\d{2}\/\d{2}\/\d{4}/.test(raw)) {
+            chave = raw.slice(6, 10) + "-" + raw.slice(3, 5);
+          } else if (/^\d{4}-\d{2}/.test(raw)) {
+            chave = raw.slice(0, 7);
+          } else if (raw.includes(" de ")) {
+            const pTs = raw.split(" de ");
+            if (pTs.length === 3) {
+              const mE = pTs[1].toUpperCase();
+              const mm = ["","JANEIRO","FEVEREIRO","MAR\xC7O","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"].indexOf(mE);
+              if (mm > 0) chave = `${pTs[2]}-${String(mm).padStart(2,"0")}`;
+            }
           }
         }
       }
       if (chave && chave !== "NaT") {
-        m[chave] = (m[chave] || 0) + 1;
-        val[chave] = (val[chave] || 0) + parseBRL(p["VALOR"]);
+        mesMap[chave] = (mesMap[chave] || 0) + 1;
+        mesVal[chave] = (mesVal[chave] || 0) + parseBRL(p["VALOR"]);
       }
-    });
-    return Object.entries(m).sort(([a], [b]) => a < b ? -1 : 1).slice(-60).map(([mes, n]) => ({ mes, n, valor: val[mes] || 0 }));
-  }, [filtered]);
 
-  // [FIX8] Total financeiro — soma campo VALOR de todos os processos filtrados
-  const totalGeral = useMemo(() =>
-    filtered.reduce((acc, p) => acc + parseBRL(p["VALOR"]), 0),
-  [filtered]);
-  const fmtBRL = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      // Total Geral
+      total += parseBRL(p["VALOR"]);
 
-  // Top 8 órgãos
-  const topOrg = useMemo(() => {
-    const m = {};
-    const mv = {};
-    filtered.forEach(p => {
-      const o = String(p["ORGÃO"] || "").trim();
+      // Top Org
       if (o) {
-        m[o] = (m[o] || 0) + 1;
-        mv[o] = (mv[o] || 0) + parseBRL(p["VALOR"]);
+        topOrgMap[o] = (topOrgMap[o] || 0) + 1;
+        topOrgVal[o] = (topOrgVal[o] || 0) + parseBRL(p["VALOR"]);
       }
     });
-    return Object.entries(m).sort(([, a], [, b]) => b - a).slice(0, 8).map(([o, n]) => ({
-      orgao: o, n, valor: mv[o] || 0,
-      pct: filtered.length ? (n / filtered.length * 100).toFixed(1) : "0"
-    }));
+
+    return {
+      filteredOrgsCount: orgs.size,
+      filteredFornsCount: forns.size,
+      porMes: Object.entries(mesMap).sort(([a], [b]) => a < b ? -1 : 1).slice(-60).map(([mes, n]) => ({ mes, n, valor: mesVal[mes] || 0 })),
+      totalGeral: total,
+      topOrg: Object.entries(topOrgMap).sort(([, a], [, b]) => b - a).slice(0, 8).map(([orgao, n]) => ({
+        orgao, n, valor: topOrgVal[orgao] || 0,
+        pct: filtered.length ? (n / filtered.length * 100).toFixed(1) : "0"
+      }))
+    };
   }, [filtered]);
+  const fmtBRL = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   const bg = dark ? T.appBgDark : T.appBg,
     cardBg = dark ? T.cardBgDark : T.cardBg,
