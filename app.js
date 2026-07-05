@@ -8548,9 +8548,20 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
   const fmtBRL   = v => (typeof v==="number"?v:parseBRL(v)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const MESES_P  = ["","janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 
+  // ── [⚡ Bolt] O(N) lookup for processos using a Map instead of O(N^2) .find() ──
+  const procMap = React.useMemo(() => {
+    const map = new Map();
+    processos.forEach(p => {
+      const num = String(p["NÚMERO DO DOCUMENTO"] || "");
+      if (num) map.set(num, p);
+    });
+    return map;
+  }, [processos]);
+
   // ── Itens histórico de processos do sistema ──
   const itensHist = React.useMemo(() => historico.map(h => {
-    const proc = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]||"")===String(h["Processo"]||""));
+    const num = String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||"");
+    const proc = num ? procMap.get(num) : undefined;
     return {
       _id:       String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||Math.random()),
       processo:  String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||""),
