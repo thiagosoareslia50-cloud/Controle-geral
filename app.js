@@ -2827,6 +2827,8 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
     }),
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setVer(v => !v),
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
+      title: ver ? "Ocultar senha" : "Mostrar senha",
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
         border: "none", cursor: "pointer", fontSize: 14, color: "#94a3b8"
@@ -3140,6 +3142,7 @@ function Sidebar({
   ),
   /*#__PURE__*/React.createElement("button", {
     onClick: toggleMini,
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
     title: mini ? "Expandir menu" : "Recolher menu",
     style: {
       position: "absolute", top: 6, right: 6, background: "rgba(255,255,255,.1)",
@@ -4092,6 +4095,8 @@ function NovoProcessoPage({
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
       onClick: () => setFornHistorial(null),
+      "aria-label": "Fechar histórico do fornecedor",
+      title: "Fechar histórico do fornecedor",
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
   ),
@@ -4322,6 +4327,7 @@ function NovoProcessoPage({
           }
           setIsManualNum(!isManualNum);
         },
+        "aria-label": isManualNum ? "Voltar para automático" : "Digitar número manualmente",
         title: isManualNum ? "Voltar para automático" : "Digitar número manualmente",
         style: {
           background: isManualNum ? "#ea580c" : (dark ? "#1a3a2a" : "#e6f4ea"),
@@ -4465,6 +4471,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setModMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     title: modMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,
@@ -4506,6 +4513,7 @@ function NovoProcessoPage({
     label: ""
   })), /*#__PURE__*/React.createElement("button", {
     onClick: () => setContMode(m => m === "forn" ? "todos" : "forn"),
+    "aria-label": contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     title: contMode === "forn" ? "Ver todas" : "Filtrar por fornecedor",
     style: {
       width: 36,

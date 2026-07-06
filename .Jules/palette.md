@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility for Icon-only Buttons
+**Learning:** Found multiple icon-only buttons (like eye icon for password visibility, play/pause style toggles for sidebar, close buttons) that relied solely on visual meaning or 'title' attributes, lacking explicit 'aria-label' properties. In a buildless app where React.createElement is used directly, it's easy to miss these standard React accessibility attributes.
+**Action:** When adding or reviewing icon-only buttons, explicitly ensure `aria-label` is provided alongside `title` for screen readers, injecting them directly into the `React.createElement` props object.
