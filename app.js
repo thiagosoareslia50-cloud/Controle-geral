@@ -2826,6 +2826,7 @@ function ModalSenha({ login, onOk, onCancel, dark }) {
       style: { ...IS(dark), paddingRight: 36 }
     }),
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": ver ? "Ocultar senha" : "Mostrar senha",
       onClick: () => setVer(v => !v),
       style: {
         position: "absolute", right: 8, top: 8, background: "transparent",
@@ -3139,6 +3140,7 @@ function Sidebar({
     }, "Pref. Municipal de João Lisboa / MA")
   ),
   /*#__PURE__*/React.createElement("button", {
+    "aria-label": mini ? "Expandir menu" : "Recolher menu",
     onClick: toggleMini,
     title: mini ? "Expandir menu" : "Recolher menu",
     style: {
@@ -4091,6 +4093,7 @@ function NovoProcessoPage({
              display:"flex", justifyContent:"space-between", alignItems:"center" }
   }, "📋 Últimos processos deste fornecedor",
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Fechar histórico do fornecedor",
       onClick: () => setFornHistorial(null),
       style: { background:"none", border:"none", cursor:"pointer", color:"#94a3b8", fontSize:16, lineHeight:1 }
     }, "×")
@@ -4275,6 +4278,7 @@ function NovoProcessoPage({
       /*#__PURE__*/React.createElement("span", { style: { marginLeft: 8 } }, "Valor · Nº Ordem de Compra · Data NF")
     ),
     /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Fechar aviso de duplicação",
       onClick: () => setIsDuplicating(false),
       style: { marginLeft: "auto", background: "transparent", border: "none",
                cursor: "pointer", fontSize: 16, color: "#f59e0b", flexShrink: 0 }
@@ -5051,6 +5055,7 @@ function BuscarPage({
       anosDisp.map(a => /*#__PURE__*/React.createElement("option", { key: a, value: a }, a))
     ),
     (filtTipo || filtDec || filtAno) && /*#__PURE__*/React.createElement("button", {
+      "aria-label": "Limpar filtros",
       onClick: () => { setFiltTipo(""); setFiltDec(""); setFiltAno(""); },
       style: { fontSize: 11, padding: "6px 12px", background: "#fee2e2",
         border: "1px solid #fecaca", borderRadius: 7, color: "#dc2626", cursor: "pointer", whiteSpace: "nowrap" }
@@ -5903,6 +5908,7 @@ const BarChartCSS = ({ data, onHover }) => {
           ),
           // Botão limpar total
           (filtOrg || filtAno || filtMes || filtForn) && /*#__PURE__*/React.createElement("button", {
+            "aria-label": "Limpar filtros",
             onClick: () => { setFiltOrg(""); setFiltAno(""); setFiltMes(""); setFiltForn(""); },
             style: { fontSize: 11, padding: "5px 10px", background: dark ? "#2d1a1a" : "#fee2e2",
               border: `1px solid ${dark ? "#ef4444" : "#fecaca"}`, borderRadius: 7,
@@ -8947,6 +8953,7 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
             )
           ),
           docs.length>1&&/*#__PURE__*/React.createElement("button",{
+            "aria-label": "Excluir documento",
             onClick:()=>delDoc(d._id),
             style:{position:"absolute",top:12,right:14,background:"#dc2626",color:"#fff",border:"none",borderRadius:6,padding:"3px 10px",fontSize:11,cursor:"pointer",fontWeight:700}
           },"✕")
