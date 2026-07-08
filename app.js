@@ -8549,20 +8549,32 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
   const MESES_P  = ["","janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 
   // ── Itens histórico de processos do sistema ──
-  const itensHist = React.useMemo(() => historico.map(h => {
-    const proc = processos.find(p => String(p["NÚMERO DO DOCUMENTO"]||"")===String(h["Processo"]||""));
-    return {
-      _id:       String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||Math.random()),
-      processo:  String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||""),
-      orgao:     String(h["Órgão"]||h["ORGÃO"]||""),
-      fornecedor:String(h["Fornecedor"]||h["FORNECEDOR"]||""),
-      cnpj:      String(h["CNPJ"]||proc?.["CNPJ"]||""),
-      nf:        String(h["Nº"]||proc?.["Nº"]||""),
-      valor:     String(h["Valor"]||h["VALOR"]||""),
-      data:      String(h["Data"]||h["DATA"]||""),
-      objeto:    String(h["OBJETO"]||proc?.["OBJETO"]||""),
-    };
-  }), [historico, processos]);
+  const itensHist = React.useMemo(() => {
+    const procMap = new Map();
+    if (processos && Array.isArray(processos)) {
+      for (const p of processos) {
+        const key = String(p["NÚMERO DO DOCUMENTO"] || "");
+        if (key && !procMap.has(key)) {
+          procMap.set(key, p);
+        }
+      }
+    }
+
+    return (historico || []).map(h => {
+      const proc = procMap.get(String(h["Processo"]||""));
+      return {
+        _id:       String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||Math.random()),
+        processo:  String(h["Processo"]||h["NÚMERO DO DOCUMENTO"]||""),
+        orgao:     String(h["Órgão"]||h["ORGÃO"]||""),
+        fornecedor:String(h["Fornecedor"]||h["FORNECEDOR"]||""),
+        cnpj:      String(h["CNPJ"]||proc?.["CNPJ"]||""),
+        nf:        String(h["Nº"]||proc?.["Nº"]||""),
+        valor:     String(h["Valor"]||h["VALOR"]||""),
+        data:      String(h["Data"]||h["DATA"]||""),
+        objeto:    String(h["OBJETO"]||proc?.["OBJETO"]||""),
+      };
+    });
+  }, [historico, processos]);
 
   const filtrados = React.useMemo(() => {
     if (!busca.trim()) return itensHist;
