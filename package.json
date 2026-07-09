@@ -1,0 +1,18 @@
+{
+  "name": "controlegeral_joaolisboa_pronto_para_subir_agora",
+  "version": "1.0.0",
+  "description": "**Sistema de Controle de Processos de Pagamento** Prefeitura Municipal de João Lisboa / MA",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0"
+  }
+}
