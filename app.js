@@ -1193,7 +1193,20 @@ async function gerarRelatorioPDF(processos, mesAno, appConfig) {
       }
     }
 
-    const parseBRL = v => { const s=String(v||"").replace(/\./g,"").replace(",",".").replace(/[^\d.]/g,""); const n=parseFloat(s); return isNaN(n)?0:n; };
+    const parseBRL = v => {
+      if (!v) return 0;
+      let s = String(v).trim();
+      if (s.includes(".") && !s.includes(",")) {
+        const pts = s.split(".");
+        if (pts[pts.length - 1].length === 2) {
+          const n = parseFloat(s.replace(/[^\d.]/g, ""));
+          return isNaN(n) ? 0 : n;
+        }
+      }
+      s = s.replace(/\./g, "").replace(",", ".").replace(/[^\d.]/g, "");
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    };
     const fmtBRL = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
     // Totais por órgão
@@ -3484,9 +3497,25 @@ function NovoProcessoPage({
   }, [mp.allOrgaos, orgaosConfig]);
   const getSecFromConfig = useCallback(org => {
     if (!org) return "";
-    const cleanOrg = org.trim().toUpperCase();
-    const matchKey = Object.keys(orgaosConfig || {}).find(k => k.trim().toUpperCase() === cleanOrg);
-    return matchKey ? orgaosConfig[matchKey]?.secretario || "" : "";
+    const normInput = normalizarOrgao(org).trim().toUpperCase();
+    
+    // Tenta primeiro achar um órgão ativo e não excluído que normalize para o mesmo nome
+    const matchKey = Object.keys(orgaosConfig || {}).find(k => {
+      const conf = orgaosConfig[k];
+      if (conf?.excluido || !conf?.ativo) return false;
+      return normalizarOrgao(k).trim().toUpperCase() === normInput;
+    });
+
+    if (matchKey) {
+      return orgaosConfig[matchKey]?.secretario || "";
+    }
+
+    // Fallback: qualquer órgão (mesmo excluído/inativo) que normalize igual
+    const fallbackKey = Object.keys(orgaosConfig || {}).find(k => {
+      return normalizarOrgao(k).trim().toUpperCase() === normInput;
+    });
+
+    return fallbackKey ? orgaosConfig[fallbackKey]?.secretario || "" : "";
   }, [orgaosConfig]);
   const blankForm = useCallback(() => ({
     numDoc: String(nextProcessoNumber || proxNumero(processos)).padStart(4, "0"),
@@ -5266,7 +5295,10 @@ function BuscarPage({
       if (st  === "pago")       return React.createElement("span", { style: { background: "#0f2027", color: "#94a3b8", fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px", whiteSpace: "nowrap" } }, "⚫ Pago");
       return React.createElement("span", { style: { background: "#78350f", color: "#fcd34d", fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px", whiteSpace: "nowrap" } }, "🟡 Em análise");
     }
-    const v = String(proc[col] || "");
+    let v = String(proc[col] || "");
+    if (col === "VALOR") {
+      v = formatValor(v);
+    }
     return v.length > 38 ? v.slice(0, 36) + "…" : v;
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -5500,7 +5532,15 @@ function DashboardPage({
 }) {
   const parseBRL = v => {
     if (!v) return 0;
-    const s = String(v).replace(/\./g, "").replace(",", ".").replace(/[^\d.]/g, "");
+    let s = String(v).trim();
+    if (s.includes(".") && !s.includes(",")) {
+      const pts = s.split(".");
+      if (pts[pts.length - 1].length === 2) {
+        const n = parseFloat(s.replace(/[^\d.]/g, ""));
+        return isNaN(n) ? 0 : n;
+      }
+    }
+    s = s.replace(/\./g, "").replace(",", ".").replace(/[^\d.]/g, "");
     const n = parseFloat(s);
     return isNaN(n) ? 0 : n;
   };
@@ -6556,7 +6596,7 @@ function HistoricoPage({
         color: tc,
         whiteSpace: "nowrap"
       }
-    }, h["Valor"] || ""), /*#__PURE__*/React.createElement("td", {
+    }, formatValor(h["Valor"] || h["VALOR"] || "")), /*#__PURE__*/React.createElement("td", {
       style: {
         padding: "8px 12px",
         color: tc
@@ -8686,52 +8726,7 @@ sidebarOpen && /*#__PURE__*/React.createElement("div", {
       flexDirection: "column",
       minWidth: 0
     }
-  }, processos.length === 0 && (historico || []).length === 0 && page !== "config" && /*#__PURE__*/React.createElement("div", {
-    style: {
-      margin: "12px 16px 0",
-      padding: "12px 16px",
-      background: "#7c2d12",
-      borderRadius: 10,
-      border: "1.5px solid #ea580c",
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      flexShrink: 0
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 20
-    }
-  }, "\u26A0\uFE0F"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontWeight: 700,
-      color: "#fed7aa",
-      fontSize: 13
-    }
-  }, "Nenhum dado importado \u2014 o sistema est\xE1 vazio"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11.5,
-      color: "#fdba74",
-      marginTop: 2
-    }
-  }, "V\xE1 em ", /*#__PURE__*/React.createElement("b", null, "Configura\xE7\xF5es"), " e clique em ", /*#__PURE__*/React.createElement("b", null, "Selecionar Excel (.xlsx)"), " para importar a planilha de processos. Sem isso os campos do PDF ficam em branco.")), /*#__PURE__*/React.createElement("button", {
-    onClick: () => handleSetPage("config"),
-    style: {
-      background: "#ea580c",
-      color: "#fff",
-      border: "none",
-      borderRadius: 7,
-      padding: "7px 14px",
-      fontWeight: 700,
-      cursor: "pointer",
-      fontSize: 12,
-      whiteSpace: "nowrap"
-    }
-  }, "\uD83D\uDCE5 Ir para Configura\xE7\xF5es")), page === "processos" && /*#__PURE__*/React.createElement(NovoProcessoPage, {
+  }, page === "processos" && /*#__PURE__*/React.createElement(NovoProcessoPage, {
     processos: processos,
     historico: historico,
     orgaosConfig: orgaosConfig,
@@ -8979,7 +8974,20 @@ function ProtocoloPage({ historico = [], processos = [], dark, toast, appConfig 
   }, [modo, protoReloadKey]);
 
   // ── helpers ──
-  const parseBRL = v => { const s=String(v||"").replace(/\./g,"").replace(",",".").replace(/[^\d.]/g,""); const n=parseFloat(s); return isNaN(n)?0:n; };
+  const parseBRL = v => {
+    if (!v) return 0;
+    let s = String(v).trim();
+    if (s.includes(".") && !s.includes(",")) {
+      const pts = s.split(".");
+      if (pts[pts.length - 1].length === 2) {
+        const n = parseFloat(s.replace(/[^\d.]/g, ""));
+        return isNaN(n) ? 0 : n;
+      }
+    }
+    s = s.replace(/\./g, "").replace(",", ".").replace(/[^\d.]/g, "");
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  };
   const fmtBRL   = v => (typeof v==="number"?v:parseBRL(v)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const MESES_P  = ["","janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 
